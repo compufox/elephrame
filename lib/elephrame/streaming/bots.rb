@@ -6,6 +6,7 @@ module Elephrame
     
     # a bot that can respond to all interactions
     class Interact < BaseBot
+      include Elephrame::Streaming
       include Elephrame::Interacter
       
       def initialize
@@ -19,6 +20,7 @@ module Elephrame
     # run accepts a block, but also supports
     # use of on_reply
     class Reply < BaseBot
+      include Elephrame::Streaming
       include Elephrame::Reply
 
       def initialize

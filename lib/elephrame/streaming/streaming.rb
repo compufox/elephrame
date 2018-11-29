@@ -9,7 +9,6 @@ module Elephrame
   end
     
   module Reply
-    include Elephrame::Streaming
     attr :on_reply
 
     def on_reply &block
@@ -32,7 +31,6 @@ module Elephrame
   end
   
   module AllInteractions
-    include Elephrame::Streaming
     include Elephrame::Reply
     attr :on_fave, :on_boost, :on_follow
     
