@@ -1,6 +1,6 @@
 require 'elephrame'
 
-mix = Elephrame::Bots::CombinedBot.new '30s'
+mix = Elephrame::Bots::PeriodInteract.new '30s'
 
 mix.on_reply { |bot, post|
   bot.post("@#{post.account.acct} Thanks for helping me test stuff :3",

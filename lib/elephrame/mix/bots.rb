@@ -6,7 +6,7 @@ module Elephrame
   module Bots
     # a bot that posts things on an interval
     # but can also respond to interactions
-    class CombinedBot < BaseBot
+    class PeriodInteract < BaseBot
       include Elephrame::Scheduler
       include Elephrame::AllInteractions
       
