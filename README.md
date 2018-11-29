@@ -34,7 +34,7 @@ my_bot.run { |bot|
 }
 ```
 
-	$ INSTANCE="mastodon.social" TOKEN="your_access_token" ruby bot.rb
+	$ INSTANCE="https://mastodon.social" TOKEN="your_access_token" ruby bot.rb
 
 Check the [examples](https://github.com/theZacAttacks/elephrame/tree/master/examples) directory for more example bots
 
