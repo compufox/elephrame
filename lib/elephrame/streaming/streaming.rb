@@ -17,7 +17,7 @@ module Elephrame
 
     def run_reply
       @streamer.user do |update|
-        next unless update.kind_of? Mastodon::Notification && update.type == 'mention'
+        next unless update.kind_of? Mastodon::Notification and update.type == 'mention'
 
         if block_given?
           yield(self, update.status)
