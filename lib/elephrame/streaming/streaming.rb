@@ -21,7 +21,7 @@ module Elephrame
 
         if block_given?
           yield(self, update.status)
-        else if not @on_reply.nil?
+        else
           @on_reply.call(self, update.status)
         end
       end

@@ -7,7 +7,7 @@ module Elephrame
     # a bot that can respond to all interactions
     class Interact < BaseBot
       include Elephrame::Streaming
-      include Elephrame::Interacter
+      include Elephrame::AllInteractions
       
       def initialize
         super()
