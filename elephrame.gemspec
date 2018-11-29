@@ -10,8 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["thezacattacks@gmail.com"]
   spec.license       = "MIT"
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{A framework for assisting in making mastodon/pleroma bots}
   spec.homepage      = "https://github.com/theZacAttacks/elephrame"
 
   # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
