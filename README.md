@@ -1,8 +1,12 @@
 # Elephrame
 
+[![Gem Version](http://img.shields.io/gem/v/elephrame.svg)][gem]
+
+[gem]: https://rubygems.org/gems/elephrame
+
 A framework that helps simplify the creation of bots for mastodon/pleroma
 
-Uses rufus-scheduler in the backend
+Uses [rufus-scheduler](https://github.com/jmettraux/rufus-scheduler) in the backend
 
 ## Installation
 
@@ -51,7 +55,8 @@ The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration'
 
 ## Usage
 
-TODO: api docs
+All the documentation is over at [RubyDoc](https://www.rubydoc.info/github/theZacAttacks/elephrame/)!
+
 TODO: usage docs
 
 ## Development

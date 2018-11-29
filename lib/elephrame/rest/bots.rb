@@ -15,7 +15,7 @@ module Elephrame
       # creates a new Periodic bot
       #
       # @param intv [String] string specifying interval to post.
-      #   ex: '3h' (every 3 hours) '20m' (every 20 minutes)
+      #        ex: '3h' (every 3 hours) '20m' (every 20 minutes)
       #       '00 12 * * *' (every day at 12:00)
       #       '00 00 25 12 *' (midnight on christmas)
       #
