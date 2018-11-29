@@ -39,5 +39,8 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "minitest", "~> 5.0"
   
   spec.add_dependency 'rufus-scheduler'
-#  spec.add_dependency 'mastodon-api', '~> 1.1.0'
+  spec.add_dependency 'moostodon', '~> 0.3.0'
+  
+  # until mastodon-api gets a bump this stays commented out
+  #spec.add_dependency 'mastodon-api', '> 1.1.0'
 end

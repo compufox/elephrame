@@ -1,4 +1,4 @@
-require 'mastodon-api'
+require 'moostodon'
 require 'elephrame/version'
 require 'elephrame/streaming/bots'
 require 'elephrame/rest/bots'
