@@ -1,14 +1,21 @@
 module Elephrame  
   module Bots
-    
+
+    ##
     # a superclass for other bots
     # holds common functions and variables
     class BaseBot
-      attr_reader :client
+      attr_reader :client, :username
 
+      ##
+      # Sets up our REST client, gets and saves our username
+      #
+      # @return [Elephrame::Bots::BaseBot]
+      
       def initialize
         @client = Mastodon::REST::Client.new(base_url: ENV['INSTANCE'],
                                              bearer_token: ENV['TOKEN'])
+        @username = @client.verify_credentials().account.acct
       end
 
       ##
@@ -36,6 +43,29 @@ module Elephrame
         }
         
         @client.create_status text, options
+      end
+
+      
+      ##
+      # Finds most recent post by bot in the ancestors of a provided post
+      #
+      # @param id [String] post to base search off of
+      # @param depth [Integer] max number of posts to search
+      # @param stop_at [Integer] defines which ancestor to stop at
+      #
+      # @return [Mastodon::Status]
+      
+      def find_ancestor(id, depth = 10, stop_at = 1)
+        depth.each {
+          post = @client.status(id)
+          id = post.id
+
+          stop_at -= 1 if post.account.acct == @username
+
+          return post if stop_at.zero?
+        }
+
+        return nil
       end
     end
 

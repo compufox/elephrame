@@ -1,6 +1,6 @@
 module Elephrame
   module Streaming
-    attr :streamer, :last_mention
+    attr :streamer
 
     ##
     # Creates the stream client
@@ -10,27 +10,32 @@ module Elephrame
                                                   bearer_token: ENV['TOKEN'])
     end
 
-    ##
-    # Replies to the last mention it the bot recieved using the mention's
-    # visibility and spoiler with +text+
-    #
-    # @param text [String] text to post as a reply
-    
-    def reply(text)
-      post(text,
-           visibility: @last_mention.visibility, reply_id: @last_mention.id,
-           spoiler: @last_mention.spoiler_text)
-    end
   end
     
   module Reply
-    attr :on_reply
+    attr :on_reply, :last_mention
 
     ##
     # Sets on_reply equal to +block+
     
     def on_reply &block
       @on_reply = block
+    end
+
+    ##
+    # Replies to the last mention the bot recieved using the mention's
+    # visibility and spoiler with +text+
+    #
+    # *DOES NOT AUTOMATICALLY INCLUDE @'S*
+    #
+    # @param text [String] text to post as a reply
+    
+    def reply(text)
+
+      # maybe also @ everyone from the mention? idk that seems like a bad idea tbh
+      post(text,
+           visibility: @last_mention.visibility, reply_id: @last_mention.id,
+           spoiler: @last_mention.spoiler_text)
     end
 
     ##
@@ -41,6 +46,8 @@ module Elephrame
       @streamer.user do |update|
         next unless update.kind_of? Mastodon::Notification and update.type == 'mention'
 
+        @last_mention = update.status
+        
         if block_given?
           yield(self, update.status)
         else
@@ -88,6 +95,7 @@ module Elephrame
           case update.type
               
           when 'mention'
+            @last_mention = update.status
             @on_reply.call(self, update.status) unless @on_reply.nil?
             
           when 'reblog'

@@ -3,6 +3,9 @@
 [![Gem Version](http://img.shields.io/gem/v/elephrame.svg)][gem]
 
 [gem]: https://rubygems.org/gems/elephrame
+[RubyDoc](https://www.rubydoc.info/github/theZacAttacks/elephrame/)
+
+Elephant-Framework
 
 A framework that helps simplify the creation of bots for mastodon/pleroma
 
