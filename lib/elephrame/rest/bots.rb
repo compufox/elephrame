@@ -1,5 +1,5 @@
-require 'elephrame/rest/rest'
-require 'elephrame/bot'
+require_relative 'rest'
+require_relative '../bot'
 
 module Elephrame
   module Bots

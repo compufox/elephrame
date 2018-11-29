@@ -1,6 +1,6 @@
-require 'elephrame/rest/rest'
-require 'elephrame/streaming/streaming'
-require 'elephrame/bot'
+require_relative '../rest/rest'
+require_relative '../streaming/streaming'
+require_relative '../bot'
 
 module Elephrame
   module Bots

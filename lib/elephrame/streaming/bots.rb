@@ -1,5 +1,5 @@
-require 'elephrame/streaming/streaming'
-require 'elephrame/bot'
+require_relative 'streaming'
+require_relative '../bot'
 
 module Elephrame
   module Bots
