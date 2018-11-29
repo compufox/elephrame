@@ -2,7 +2,7 @@ module Elephrame
   module Bots
     
     # a superclass for other bots
-    # holds common functions and the rest api client
+    # holds common functions and variables
     class BaseBot
       attr_reader :client
 
@@ -10,6 +10,15 @@ module Elephrame
         @client = Mastodon::REST::Client.new(base_url: ENV['INSTANCE'],
                                              bearer_token: ENV['TOKEN'])
       end
+
+      ##
+      # Creates a post, uploading media if need be
+      #
+      # @param text [String] text to post
+      # @param visibility [String] visibility level
+      # @param spoiler [String] text to use as content warning
+      # @param reply_id [String] id of post to reply to
+      # @param media [Array<String>] array of file paths
       
       def post(text, visibility: 'unlisted', spoiler: '', reply_id: '', media: [])
         
