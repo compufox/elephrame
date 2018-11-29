@@ -11,9 +11,10 @@ module Elephrame
     end
 
   end
-    
+
+  
   module Reply
-    attr :on_reply, :last_mention
+    attr :on_reply, :mention_data
 
     ##
     # Sets on_reply equal to +block+
@@ -33,9 +34,22 @@ module Elephrame
     def reply(text)
 
       # maybe also @ everyone from the mention? idk that seems like a bad idea tbh
-      post(text,
-           visibility: @last_mention.visibility, reply_id: @last_mention.id,
-           spoiler: @last_mention.spoiler_text)
+      post(text, @mention_data[:vis], @mention_data[:spoiler],
+           @mention_data[:id])
+    end
+
+    ##
+    # Stores select data about a post into a hash for later use
+    #
+    # @param mention [Mastodon::Status] the most recent mention the bot received
+
+    def store_mention_data(mention)
+      @mention_data = {
+        id: mention.id,
+        vis: mention.visibility,
+        spoiler: mention.spoiler_text,
+        mentions: mention.mentions
+      }
     end
 
     ##
@@ -46,9 +60,10 @@ module Elephrame
       @streamer.user do |update|
         next unless update.kind_of? Mastodon::Notification and update.type == 'mention'
 
-        @last_mention = update.status
         # this makes it so .content calls strip instead 
         update.status.class.module_eval { alias_method :content, :strip } if @strip_html
+
+        store_mention_data update.status
         
         if block_given?
           yield(self, update.status)
@@ -61,6 +76,7 @@ module Elephrame
     alias_method :run, :run_reply
   end
   
+
   module AllInteractions
     include Elephrame::Reply
     attr :on_fave, :on_boost, :on_follow
@@ -97,9 +113,10 @@ module Elephrame
           case update.type
               
           when 'mention'
-            @last_mention = update.status
+
             # this makes it so .content calls strip instead 
             update.status.class.module_eval { alias_method :content, :strip } if @strip_html
+            store_mention_data update.status
             @on_reply.call(self, update.status) unless @on_reply.nil?
             
           when 'reblog'

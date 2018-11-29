@@ -4,6 +4,7 @@ module Elephrame
     ##
     # a superclass for other bots
     # holds common functions and variables
+    
     class BaseBot
       attr_reader :client, :username
       attr_accessor :strip_html
@@ -32,7 +33,7 @@ module Elephrame
       
       def post(text, visibility: 'unlisted', spoiler: '', reply_id: '', media: [])
         
-        if not media.empty?
+        unless media.empty?
           media.collect! {|m|
             @client.upload_media(m).id
           }
@@ -70,8 +71,8 @@ module Elephrame
 
         return nil
       end
+      
     end
-
   end
 end
 
