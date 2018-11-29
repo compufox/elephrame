@@ -1,8 +1,8 @@
 # Elephrame
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/elephrame`. To experiment with that code, run `bin/console` for an interactive prompt.
+A framework that helps simplify the creation of bots for mastodon/pleroma
 
-TODO: Delete this and the text above, and describe your gem
+Uses rufus-scheduler in the backend
 
 ## Installation
 
@@ -20,9 +20,39 @@ Or install it yourself as:
 
     $ gem install elephrame
 
+## Quickstart
+
+bot that posts "i'm gay" every three hours:
+
+```ruby
+require 'elephrame'
+
+my_bot = Elephrame::Bots::Periodic.new '3h'
+
+my_bot.run { |bot|
+  bot.post("i'm gay")
+}
+```
+
+	$ INSTANCE="mastodon.social" TOKEN="your_access_token" ruby bot.rb
+
+Check the [examples](https://github.com/theZacAttacks/elephrame/examples) directory for more example bots
+
+### Bot Types
+
+So far the framework support 4 bot types: Periodic, Interact, PeroidInteract, Reply
+
+- `Periodic` supports posting on a set schedule
+- `Interact` supports callbacks for each type of interaction (favorites, boosts, replies, follows)
+- `PeriodInteract` supports both of the above (I know, this isn't a good name)
+- `Reply` only supports replying to mentions
+
+The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
+
 ## Usage
 
-TODO: Write usage instructions here
+TODO: api docs
+TODO: usage docs
 
 ## Development
 
@@ -32,8 +62,8 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/elephrame. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/theZacAttacks/elephrame. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## Code of Conduct
 
-Everyone interacting in the Elephrame project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/elephrame/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Elephrame project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/theZacAttacks/elephrame/blob/master/CODE_OF_CONDUCT.md).
