@@ -47,6 +47,8 @@ module Elephrame
         next unless update.kind_of? Mastodon::Notification and update.type == 'mention'
 
         @last_mention = update.status
+        # this makes it so .content calls strip instead 
+        update.status.class.module_eval { alias_method :content, :strip } if @strip_html
         
         if block_given?
           yield(self, update.status)
@@ -96,6 +98,8 @@ module Elephrame
               
           when 'mention'
             @last_mention = update.status
+            # this makes it so .content calls strip instead 
+            update.status.class.module_eval { alias_method :content, :strip } if @strip_html
             @on_reply.call(self, update.status) unless @on_reply.nil?
             
           when 'reblog'

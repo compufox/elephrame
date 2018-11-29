@@ -6,16 +6,19 @@ module Elephrame
     # holds common functions and variables
     class BaseBot
       attr_reader :client, :username
+      attr_accessor :strip_html
 
       ##
-      # Sets up our REST client, gets and saves our username
+      # Sets up our REST client, gets and saves our username, sets default
+      # value for strip_html (true)
       #
       # @return [Elephrame::Bots::BaseBot]
       
       def initialize
         @client = Mastodon::REST::Client.new(base_url: ENV['INSTANCE'],
                                              bearer_token: ENV['TOKEN'])
-        @username = @client.verify_credentials().account.acct
+        @username = @client.verify_credentials().acct
+        @strip_html = true
       end
 
       ##
