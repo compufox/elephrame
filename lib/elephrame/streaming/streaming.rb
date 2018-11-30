@@ -30,12 +30,13 @@ module Elephrame
     # *DOES NOT AUTOMATICALLY INCLUDE @'S*
     #
     # @param text [String] text to post as a reply
+    # @param options [Hash] a hash of arguments to pass to post, overrides
+    #   duplicating settings from last mention 
     
-    def reply(text)
-
+    def reply(text, options = {})
+      
       # maybe also @ everyone from the mention? idk that seems like a bad idea tbh
-      post(text, @mention_data[:vis], @mention_data[:spoiler],
-           @mention_data[:id], @mention_data[:sensitive])
+      post(text, *@mention_data.merge(options))
     end
 
     ##
