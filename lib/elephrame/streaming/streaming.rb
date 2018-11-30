@@ -35,7 +35,7 @@ module Elephrame
 
       # maybe also @ everyone from the mention? idk that seems like a bad idea tbh
       post(text, @mention_data[:vis], @mention_data[:spoiler],
-           @mention_data[:id])
+           @mention_data[:id], @mention_data[:sensitive])
     end
 
     ##
@@ -48,7 +48,8 @@ module Elephrame
         id: mention.id,
         vis: mention.visibility,
         spoiler: mention.spoiler_text,
-        mentions: mention.mentions
+        mentions: mention.mentions,
+        sensitive: mention.sensitive?
       }
     end
 

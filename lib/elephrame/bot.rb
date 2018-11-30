@@ -29,9 +29,11 @@ module Elephrame
       # @param visibility [String] visibility level
       # @param spoiler [String] text to use as content warning
       # @param reply_id [String] id of post to reply to
+      # @param hide_media [Bool] should we hide media?
       # @param media [Array<String>] array of file paths
       
-      def post(text, visibility: 'unlisted', spoiler: '', reply_id: '', media: [])
+      def post(text, visibility: 'unlisted', spoiler: '',
+               reply_id: '', hide_media: false, media: [])
         
         unless media.empty?
           media.collect! {|m|
@@ -44,6 +46,7 @@ module Elephrame
           spoiler_text: spoiler,
           in_reply_to_id: reply_id,
           media_ids: media,
+          sensitive: hide_media,
         }
         
         @client.create_status text, options
