@@ -61,7 +61,7 @@ module Elephrame
       
       def find_ancestor(id, depth = 10, stop_at = 1)
         depth.each {
-          post = @client.status(id)
+          post = @client.status(id) unless id.nil?
           id = post.id
 
           stop_at -= 1 if post.account.acct == @username
