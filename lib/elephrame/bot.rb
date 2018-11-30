@@ -35,7 +35,7 @@ module Elephrame
       def post(text, visibility: 'unlisted', spoiler: '',
                reply_id: '', hide_media: false, media: [])
         
-        unless media.empty?
+        unless media.size.zero?
           media.collect! {|m|
             @client.upload_media(m).id
           }
