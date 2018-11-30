@@ -34,9 +34,10 @@ module Elephrame
       
       def post(text, visibility: 'unlisted', spoiler: '',
                reply_id: '', hide_media: false, media: [])
-        
+
+        uploaded_ids = []
         unless media.size.zero?
-          media.collect! {|m|
+          uploaded_ids = media.collect {|m|
             @client.upload_media(m).id
           }
         end
