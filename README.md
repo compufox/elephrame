@@ -74,6 +74,13 @@ Exposed methods from bot object:
 
 (See RubyDocs for source code documentation)
 
+## In the Wild!
+
+Here's a list of bots that are currently using this framework. If you are using it, add yourself to this list and submit a pull request!
+
+- [GameBot](https://github.com/theZacAttacks/GameBot)
+- [EnhanceBot](https://github.com/theZacAttacks/EnhanceBot)
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
