@@ -65,8 +65,10 @@ Exposed methods from bot object:
 - `client` this is the underlying mastodon rest client we use in the backend. use this to make custom calls to the api for which we don't provide a helper
 - `username` the name of the bot as fetched by verify_credentials
 - `strip_html` (defaults to true) if set, the framework will automatically strip all html symbols from the post content
+- `max_retries` (defaults to 5) the maximum amount of times the framework will retry a mastodon request
+- `failed` a hash that represents the status of the last post or media upload. `failed[:post]` and `failed[:media]`; returns true if it failed, false if it succeeded 
 - `post(content, visibility: 'unlisted', spoiler: '', reply_id: '', hide_media: false, media: [])` this provides an easy way to post statuses from inside code blocks
-- `reply(content, options = {})` a shorthand method to reply to the last mention (Note: doesn't automatically @ the other user/s)
+- `reply(content, *options)` a shorthand method to reply to the last mention (Note: doesn't automatically @ the other user/s)
 - `find_ancestor(id, depth = 10, stop_at = 1)` looks backwards through reply chains for the most recent post the bot made starting at post `id` until it hits `depth` number of posts, or finds `stop_at` number of it's own posts
 - `no_bot?(account_id)` returns true if user with `account_id` has some form of "#NoBot" in their bio 
 

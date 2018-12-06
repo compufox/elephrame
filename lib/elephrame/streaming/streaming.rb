@@ -33,25 +33,11 @@ module Elephrame
     # @param options [Hash] a hash of arguments to pass to post, overrides
     #   duplicating settings from last mention 
     
-    def reply(text, options = {})
+    def reply(text, *options)
+      options = Hash[*options]
       
       # maybe also @ everyone from the mention? idk that seems like a bad idea tbh
-      post(text, *@mention_data.merge(options))
-    end
-
-    ##
-    # Stores select data about a post into a hash for later use
-    #
-    # @param mention [Mastodon::Status] the most recent mention the bot received
-
-    def store_mention_data(mention)
-      @mention_data = {
-        id: mention.id,
-        vis: mention.visibility,
-        spoiler: mention.spoiler_text,
-        mentions: mention.mentions,
-        sensitive: mention.sensitive?
-      }
+      post(text, **@mention_data.merge(options).reject { |k| k == :mentions })
     end
 
     ##
@@ -76,6 +62,23 @@ module Elephrame
     end
 
     alias_method :run, :run_reply
+
+    private
+    
+    ##
+    # Stores select data about a post into a hash for later use
+    #
+    # @param mention [Mastodon::Status] the most recent mention the bot received
+
+    def store_mention_data(mention)
+      @mention_data = {
+        reply_id: mention.id,
+        visibility: mention.visibility,
+        spoiler: mention.spoiler_text,
+        mentions: mention.mentions,
+        hide_media: mention.sensitive?
+      }
+    end
   end
   
 

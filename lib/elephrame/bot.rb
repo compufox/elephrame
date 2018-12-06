@@ -1,4 +1,5 @@
 require 'time'
+require 'net/http'
 
 module Elephrame  
   module Bots
@@ -41,7 +42,7 @@ module Elephrame
         
         uploaded_ids = []
         unless media.size.zero?
-          failed[:media] = retry_if_needed {
+          @failed[:media] = retry_if_needed {
             uploaded_ids = media.collect {|m|
               @client.upload_media(m).id
             }
@@ -52,11 +53,11 @@ module Elephrame
           visibility: visibility,
           spoiler_text: spoiler,
           in_reply_to_id: reply_id,
-          media_ids: failed[:media] ? uploaded_ids : [],
+          media_ids: @failed[:media] ? [] : uploaded_ids,
           sensitive: hide_media,
         }
 
-        failed[:post] = retry_if_needed {
+        @failed[:post] = retry_if_needed {
           @client.create_status text, options
         }
       end
@@ -104,18 +105,18 @@ module Elephrame
       # @param block [Proc] accepts a block, ensures all code inside
       #   that block gets executed even if there was an HTTP error.
       #
-      # @return [Bool] 
+      # @return [Bool] true on hitting the retry limit, false on success
       
       def retry_if_needed &block
         @max_retries.times do |i|
           begin
             block.call
-            return true
-          rescue Timeout::Error
-            puts "caught HTTP Timeout error at #{Time.now} retrying #{i-1} more times"
+            return false
+          rescue HTTP::TimeoutError
+            puts "caught HTTP Timeout error at #{Time.now} retrying #{@max_retries-i} more times"
           end
         end
-        return false
+        return true
       end
       
     end
