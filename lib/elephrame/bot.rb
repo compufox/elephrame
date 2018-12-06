@@ -87,13 +87,15 @@ module Elephrame
 
       ##
       # Checks to see if a user has some form of "#NoBot" in their bio
-      # (so we can make make friendly bots easier!)
+      # (so we can make making friendly bots easier!)
       #
       # @param account_id [String] id of account to check bio
       #
       # @return [Bool]
 
       def no_bot? account_id
+        # TODO: check account fields for NoBot, too
+        #       right now, limited by moostodon
         @client.account(account_id).note =~ /#?NoBot/i
       end
 

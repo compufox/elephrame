@@ -13,6 +13,7 @@ module Elephrame
     # won't react to interactions
     
     class PeriodInteract < BaseBot
+      include Elephrame::Streaming
       include Elephrame::Scheduler
       include Elephrame::AllInteractions
 
