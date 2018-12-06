@@ -1,3 +1,5 @@
+require 'time'
+
 module Elephrame  
   module Bots
 
@@ -6,12 +8,12 @@ module Elephrame
     # holds common functions and variables
     
     class BaseBot
-      attr_reader :client, :username
-      attr_accessor :strip_html
+      attr_reader :client, :username, :failed
+      attr_accessor :strip_html, :max_retries
 
       ##
-      # Sets up our REST client, gets and saves our username, sets default
-      # value for strip_html (true)
+      # Sets up our REST +client+, gets and saves our +username+, sets default
+      # value for +strip_html+ (true), and +max_retries+ (5), +failed+
       #
       # @return [Elephrame::Bots::BaseBot]
       
@@ -20,6 +22,8 @@ module Elephrame
                                              bearer_token: ENV['TOKEN'])
         @username = @client.verify_credentials().acct
         @strip_html = true
+        @max_retries = 5
+        @failed = { media: false, post: false }
       end
 
       ##
@@ -34,11 +38,13 @@ module Elephrame
       
       def post(text, visibility: 'unlisted', spoiler: '',
                reply_id: '', hide_media: false, media: [])
-
+        
         uploaded_ids = []
         unless media.size.zero?
-          uploaded_ids = media.collect {|m|
-            @client.upload_media(m).id
+          failed[:media] = retry_if_needed {
+            uploaded_ids = media.collect {|m|
+              @client.upload_media(m).id
+            }
           }
         end
         
@@ -46,11 +52,13 @@ module Elephrame
           visibility: visibility,
           spoiler_text: spoiler,
           in_reply_to_id: reply_id,
-          media_ids: media,
+          media_ids: failed[:media] ? uploaded_ids : [],
           sensitive: hide_media,
         }
-        
-        @client.create_status text, options
+
+        failed[:post] = retry_if_needed {
+          @client.create_status text, options
+        }
       end
 
       
@@ -86,6 +94,28 @@ module Elephrame
 
       def no_bot? account_id
         @client.account(account_id).note =~ /#?NoBot/i
+      end
+
+      private
+
+      ##
+      # An internal function that ensures our HTTP requests go through
+      #
+      # @param block [Proc] accepts a block, ensures all code inside
+      #   that block gets executed even if there was an HTTP error.
+      #
+      # @return [Bool] 
+      
+      def retry_if_needed &block
+        @max_retries.times do |i|
+          begin
+            block.call
+            return true
+          rescue Timeout::Error
+            puts "caught HTTP Timeout error at #{Time.now} retrying #{i-1} more times"
+          end
+        end
+        return false
       end
       
     end
