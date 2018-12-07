@@ -51,6 +51,7 @@ So far the framework support 4 bot types: Periodic, Interact, PeroidInteract, Re
 - `Interact` supports callbacks for each type of interaction (favorites, boosts, replies, follows)
 - `PeriodInteract` supports both of the above (I know, this isn't a good name)
 - `Reply` only supports replying to mentions
+- `Command` supports running code when mentioned with commands it recognizes
 
 The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
 
