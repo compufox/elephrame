@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    elephrame (0.3.7)
+    elephrame (0.4.0)
       moostodon (~> 0.2.0)
       rufus-scheduler
 
