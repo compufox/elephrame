@@ -3,7 +3,7 @@
 [![Gem Version](https://badge.fury.io/rb/elephrame.svg)](https://badge.fury.io/rb/elephrame)
 [RubyDoc](https://www.rubydoc.info/github/theZacAttacks/elephrame/)
 
-Elephant-Framework
+Elephant-Framework -- by [zac@computerfox.xyz](https://social.computerfox.xyz/@zac)
 
 A framework that helps simplify the creation of bots for mastodon/pleroma
 
@@ -45,7 +45,7 @@ Check the [examples](https://github.com/theZacAttacks/elephrame/tree/master/exam
 
 ### Bot Types
 
-So far the framework support 4 bot types: Periodic, Interact, PeroidInteract, Reply
+So far the framework support 5 bot types: Periodic, Interact, PeroidInteract, Reply, Command
 
 - `Periodic` supports posting on a set schedule
 - `Interact` supports callbacks for each type of interaction (favorites, boosts, replies, follows)
