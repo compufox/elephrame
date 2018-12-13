@@ -2,13 +2,13 @@ require 'elephrame'
 
 interacter = Elephrame::Bots::Interact.new
 
-interacter.on_reply { |bot, post|
+interacter.on_reply { |bot|
 
   #bot.post("@#{post.account.acct} Thanks for helping me test stuff :3",
   #           reply_id: post.id, visibility: post.visibility)
   
   ## this can be simplified to one line
-  bot.reply("@#{post.account.acct} Thanks for helping me test stuff :3")
+  bot.reply("Thanks for helping me test stuff :3")
 }
 
 interacter.on_fave { |bot, notif|

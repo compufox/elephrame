@@ -25,9 +25,11 @@ module Elephrame
 
     ##
     # Replies to the last mention the bot recieved using the mention's
-    # visibility and spoiler with +text+
+    #   visibility and spoiler with +text+
     #
-    # *DOES NOT AUTOMATICALLY INCLUDE @'S*
+    # Automatically includes an @ for the account that mentioned the bot.
+    #   Does not include any other @. See +reply_with_mentions+ if you want
+    #   to automatically include all mentions
     #
     # @param text [String] text to post as a reply
     # @param options [Hash] a hash of arguments to pass to post, overrides
@@ -36,8 +38,29 @@ module Elephrame
     def reply(text, *options)
       options = Hash[*options]
       
-      # maybe also @ everyone from the mention? idk that seems like a bad idea tbh
-      post(text, **@mention_data.merge(options).reject { |k| k == :mentions })
+      post("@#{@mention_data[:account].acct} #{text}",
+           **@mention_data.merge(options).reject { |k|
+             k == :mentions or k == :account
+           })
+    end
+
+    ##
+    # Replies to the last post and tags everyone who was mentioned
+    #  (this function respects #NoBot)
+    #
+    # @param text [String] text to post as a reply
+    # @param options [Hash] arguments to pass to post, overrides settings from
+    #  last mention
+
+    def reply_with_mentions(text, *options)
+      # build up a string of all accounts mentioned in the post
+      #  unless that account is our own, or the tagged account
+      #  has #NoBot
+      mentions = @mention_data[:mentions].collect do |m|
+        "@#{m.acct}" unless m.acct == @username or no_bot? m.id
+      end.join ' '
+      
+      reply("#{mentions.strip} #{text}", *options)
     end
 
     ##
@@ -75,8 +98,9 @@ module Elephrame
         reply_id: mention.id,
         visibility: mention.visibility,
         spoiler: mention.spoiler_text,
+        hide_media: mention.sensitive?,
         mentions: mention.mentions,
-        hide_media: mention.sensitive?
+        account: mention.account
       }
     end
   end
@@ -165,7 +189,7 @@ module Elephrame
     
     def set_help usage
       add_command 'help' do |bot, content, status|
-        bot.reply("@#{status.account.acct} #{usage}")
+        bot.reply("#{usage}")
       end
     end
 

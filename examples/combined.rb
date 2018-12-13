@@ -3,8 +3,7 @@ require 'elephrame'
 mix = Elephrame::Bots::PeriodInteract.new '30s'
 
 mix.on_reply { |bot, post|
-  bot.post("@#{post.account.acct} Thanks for helping me test stuff :3",
-           reply_id: post.id, visibility: post.visibility)
+  bot.reply("Thanks for helping me test stuff :3")
 }
 
 mix.on_fave { |bot, notif|
