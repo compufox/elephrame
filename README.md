@@ -69,7 +69,8 @@ Exposed methods from bot object:
 - `max_retries` (defaults to 5) the maximum amount of times the framework will retry a mastodon request
 - `failed` a hash that represents the status of the last post or media upload. `failed[:post]` and `failed[:media]`; returns true if it failed, false if it succeeded 
 - `post(content, visibility: 'unlisted', spoiler: '', reply_id: '', hide_media: false, media: [])` this provides an easy way to post statuses from inside code blocks
-- `reply(content, *options)` a shorthand method to reply to the last mention (Note: doesn't automatically @ the other user/s)
+- `reply(content, *options)` a shorthand method to reply to the last mention (Note: only include the @ for the user who @ed the bot)
+- `reply_with_mentions(content, *options)` similar to `reply` but includes all @s (respects #NoBot)
 - `find_ancestor(id, depth = 10, stop_at = 1)` looks backwards through reply chains for the most recent post the bot made starting at post `id` until it hits `depth` number of posts, or finds `stop_at` number of it's own posts
 - `no_bot?(account_id)` returns true if user with `account_id` has some form of "#NoBot" in their bio 
 
