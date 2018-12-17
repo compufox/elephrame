@@ -1,4 +1,3 @@
-require 'time'
 require 'net/http'
 
 module Elephrame  
@@ -6,7 +5,7 @@ module Elephrame
 
     ##
     # a superclass for other bots
-    # holds common functions and variables
+    # holds common methods and variables
     
     class BaseBot
       attr_reader :client, :username, :failed
@@ -115,7 +114,8 @@ module Elephrame
             block.call
             return false
           rescue HTTP::TimeoutError
-            puts "caught HTTP Timeout error at #{Time.now} retrying #{@max_retries-i} more times"
+            puts "caught HTTP Timeout error; retrying #{@max_retries-i} more times"
+            sleep 5
           end
         end
         return true
