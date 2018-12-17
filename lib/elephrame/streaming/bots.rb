@@ -61,13 +61,9 @@ module Elephrame
       
       def initialize prefix = '!', usage = nil
         super()
-
-        @commands = []
-        @cmd_hash = {}
         
         setup_streaming
-        set_prefix prefix
-        set_help usage unless usage.nil?
+        setup_command prefix, usage
       end
     end
 
