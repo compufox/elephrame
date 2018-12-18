@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    elephrame (0.4.2)
+    elephrame (0.4.3)
       moostodon (~> 0.2.0)
       rufus-scheduler
 
@@ -33,7 +33,7 @@ GEM
       buftok (~> 0)
       http (~> 3.0)
       oj (~> 3.3)
-    oj (3.6.7)
+    oj (3.7.4)
     public_suffix (3.0.3)
     raabro (1.1.6)
     rake (10.5.0)
