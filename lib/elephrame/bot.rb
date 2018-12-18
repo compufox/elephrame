@@ -11,6 +11,8 @@ module Elephrame
       attr_reader :client, :username, :failed
       attr_accessor :strip_html, :max_retries
 
+      NoBotRegex = /#?NoBot/i
+
       ##
       # Sets up our REST +client+, gets and saves our +username+, sets default
       # value for +strip_html+ (true), and +max_retries+ (5), +failed+
@@ -72,7 +74,7 @@ module Elephrame
       # @return [Mastodon::Status]
       
       def find_ancestor(id, depth = 10, stop_at = 1)
-        depth.each {
+        depth.times {
           post = @client.status(id) unless id.nil?
           id = post.id
 
