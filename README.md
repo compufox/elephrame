@@ -83,6 +83,7 @@ Here's a list of bots that are currently using this framework. If you are using 
 - [GameBot](https://github.com/theZacAttacks/GameBot)
 - [EnhanceBot](https://github.com/theZacAttacks/EnhanceBot)
 - [RemindMe Bot](https://github.com/theZacAttacks/RemindMeBot)
+- [InstanceEmoji Bot](https://github.com/theZacAttacks/InstanceEmojiBot)
 
 ## Development
 
