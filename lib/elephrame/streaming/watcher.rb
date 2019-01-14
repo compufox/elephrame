@@ -1,39 +1,40 @@
 module Elephrame
   module TimelineWatcher
-    LocalEndpoint = 'public/local'
-    ListEndpoint  = 'list?list='
-
-    attr :endpoint
+    
+    attr :endpoint, :endpoint_arg
 
     def setup_watcher(timeline, args = nil)
-      
-      case timeline
 
-      when 'public'
-        @endpoint = 'public'
+      @endpoint = timeline
 
-      when 'home'
-        @endpoint = 'user'
+      if endpoint_needs_arg?
+        raise "Must supply name of #{timeline}" if args.nil?
 
-      when 'local'
-        @endpoint = LocalEndpoint
-
-      when 'list'
-        raise 'list not specified' if args.nil?
-        @endpoint = ListEndpoint + URI::encode(args)
-
-      when 'tag'
-        raise 'tag not specified' if args.nil?
-        @endpoint = 'hashtag'
-
+        if timeline == 'list'
+          @endpoint_arg = @client.lists.collect { |l|
+            return l.id if l.title == args
+          }
+        else
+          @endpoint_arg = args
+        end
       end
       
     end
     
     def run_watcher &block
-      
+      @streamer.send(@endpoint,
+                     @endpoint_arg if endpoint_needs_arg?) do |post|
+        next if post.kind_of? Mastodon::Notification
+        block.call(self, post)
+      end
     end
 
     alias_method :run, :run_watcher
+
+    private
+
+    def endpoint_needs_arg?
+      @endpoint =~ /(list|hashtag)/
+    end
   end
 end
