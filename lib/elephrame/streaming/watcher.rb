@@ -3,19 +3,19 @@ module Elephrame
     
     attr :endpoint, :endpoint_arg
 
-    def setup_watcher(timeline, args = nil)
+    def setup_watcher(timeline, arg = nil)
 
       @endpoint = timeline
 
       if endpoint_needs_arg?
-        raise "Must supply name of #{timeline}" if args.nil?
+        raise "Must supply name of #{timeline}" if arg.nil?
 
+        # does some heavy lifting so the developer
+        #  doesn't need to know the ID of the list
         if timeline == 'list'
-          @endpoint_arg = @client.lists.collect { |l|
-            return l.id if l.title == args
-          }
+          @endpoint_arg = fetch_list_id(arg)
         else
-          @endpoint_arg = args
+          @endpoint_arg = arg
         end
       end
       
