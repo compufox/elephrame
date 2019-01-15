@@ -100,6 +100,21 @@ module Elephrame
           acct.fields.collect {|f| f =~ NoBotRegex}.include? true
       end
 
+      ##
+      # Gets the ID of a list given the name
+      #
+      # @param name [String] name of the list
+      #
+      # @return [Integer]
+      
+      def fetch_list_id(name)
+        lists = {}
+        @client.lists.collect do |l|
+          lists[l.title] = l.id
+        end
+        lists[name]
+      end
+
       private
 
       ##
