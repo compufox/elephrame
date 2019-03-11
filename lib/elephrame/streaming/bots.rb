@@ -67,5 +67,30 @@ module Elephrame
       end
     end
 
+    ##
+    # A bot that watches timelines or lists
+    
+    class Watcher < BaseBot
+      include Elephrame::Streaming
+      include Elephrame::Reply
+      include Elephrame::TimelineWatcher
+
+      ##
+      # Creates a new Watcher bot
+      #
+      # @param tl [String] the timeline you want to watch. accepted values are:
+      #    'public', 'home', 'list', 'local', 'hashtag'/'tag', 'local hashtag'
+      # @param name [String] the name of the list or hashtag to watch
+      #
+      # @return [Elephrame::Bots::Watcher]
+ 
+      def initialize tl, name = nil
+        super()
+
+        setup_streaming
+        setup_watcher tl, name
+      end
+    end
+    
   end
 end

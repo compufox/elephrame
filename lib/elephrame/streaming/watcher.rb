@@ -1,24 +1,17 @@
 module Elephrame
   module TimelineWatcher
-    
     attr :endpoint, :endpoint_arg
 
     def setup_watcher(timeline, arg = nil)
 
-      @endpoint = timeline
+      @endpoint = format_tl(timeline)
 
-      if endpoint_needs_arg?
-        raise "Must supply name of #{timeline}" if arg.nil?
+      raise 'list or tag not supplied' if endpoint_needs_arg? and args.nil?
+      @endpoint_arg = arg
 
-        # does some heavy lifting so the developer
-        #  doesn't need to know the ID of the list
-        if timeline == 'list'
-          @endpoint_arg = fetch_list_id(arg)
-        else
-          @endpoint_arg = arg
-        end
-      end
-      
+      # does some heavy lifting so the developer
+      #  doesn't need to know the ID of the list
+      @endpoint_arg = fetch_list_id(arg) if @endpoint == 'list'
     end
     
     def run_watcher &block
@@ -32,6 +25,12 @@ module Elephrame
     alias_method :run, :run_watcher
 
     private
+    
+    def format_tl(tl)
+      tl.gsub('home', 'user').gsub('public', 'firehose')
+        .gsub(/(hash)?tag/, 'hashtag')
+        .gsub('local ', 'local_')
+    end
 
     def endpoint_needs_arg?
       @endpoint =~ /(list|hashtag)/
