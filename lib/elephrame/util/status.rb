@@ -12,7 +12,7 @@ module Mastodon
         .gsub(/<\/p><p>/, "\n")
         .gsub(/<("[^"]*"|'[^']*'|[^'">])*>/, '')
         .gsub('&gt;', '>')
-        .gsub('&lt;', '>')
+        .gsub('&lt;', '<')
     end
   end
 end
