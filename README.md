@@ -72,7 +72,8 @@ Exposed methods from bot object:
 - `reply(content, *options)` a shorthand method to reply to the last mention (Note: only include the @ for the user who @ed the bot)
 - `reply_with_mentions(content, *options)` similar to `reply` but includes all @s (respects #NoBot)
 - `find_ancestor(id, depth = 10, stop_at = 1)` looks backwards through reply chains for the most recent post the bot made starting at post `id` until it hits `depth` number of posts, or finds `stop_at` number of it's own posts
-- `no_bot?(account_id)` returns true if user with `account_id` has some form of "#NoBot" in their bio 
+- `no_bot?(account_id)` returns true if user with `account_id` has some form of "#NoBot" in their bio or their profile fields
+- `fetch_list_id(name)` return the id of a list with given name `name`
 
 (See RubyDocs for source code documentation)
 
