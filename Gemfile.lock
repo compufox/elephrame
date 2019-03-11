@@ -1,22 +1,23 @@
 PATH
   remote: .
   specs:
-    elephrame (0.4.4)
-      moostodon (~> 0.2.0)
+    elephrame (0.4.5)
+      moostodon (~> 0.4.0)
       rufus-scheduler
 
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.5.2)
+    addressable (2.6.0)
       public_suffix (>= 2.0.2, < 4.0)
     buftok (0.2.0)
+    concurrent-ruby (1.1.5)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    et-orbi (1.1.6)
+    et-orbi (1.1.7)
       tzinfo
-    fugit (1.1.6)
-      et-orbi (~> 1.1, >= 1.1.6)
+    fugit (1.1.8)
+      et-orbi (~> 1.1, >= 1.1.7)
       raabro (~> 1.1)
     http (3.3.0)
       addressable (~> 2.3)
@@ -28,20 +29,19 @@ GEM
     http-form_data (2.1.1)
     http_parser.rb (0.6.0)
     minitest (5.11.3)
-    moostodon (0.2.0)
+    moostodon (0.4.0)
       addressable (~> 2.5)
       buftok (~> 0)
       http (~> 3.0)
       oj (~> 3.3)
-    oj (3.7.4)
+    oj (3.7.9)
     public_suffix (3.0.3)
     raabro (1.1.6)
     rake (10.5.0)
     rufus-scheduler (3.5.2)
       fugit (~> 1.1, >= 1.1.5)
-    thread_safe (0.3.6)
-    tzinfo (1.2.5)
-      thread_safe (~> 0.1)
+    tzinfo (2.0.0)
+      concurrent-ruby (~> 1.0)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.5)
@@ -56,4 +56,4 @@ DEPENDENCIES
   rake (~> 10.0)
 
 BUNDLED WITH
-   1.17.1
+   1.17.2
