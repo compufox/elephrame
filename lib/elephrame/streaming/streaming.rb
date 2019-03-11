@@ -1,6 +1,7 @@
 require_relative 'reply'
 require_relative 'command'
 require_relative 'interaction'
+require_relative 'watcher'
 
 module Elephrame
   module Streaming

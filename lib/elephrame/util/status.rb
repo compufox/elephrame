@@ -8,8 +8,11 @@ module Mastodon
     # @return [String]
     
     def strip
-      rcontent.gsub(/<\/p><p>/, "\n")
+      rcontent
+        .gsub(/<\/p><p>/, "\n")
         .gsub(/<("[^"]*"|'[^']*'|[^'">])*>/, '')
+        .gsub('&gt;', '>')
+        .gsub('&lt;', '>')
     end
   end
 end
