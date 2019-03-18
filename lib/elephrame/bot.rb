@@ -97,7 +97,7 @@ module Elephrame
       def no_bot? account_id
         acct = @client.account(account_id)
         acct.note =~ NoBotRegex ||
-          acct.fields.any? {|f| f =~ NoBotRegex}
+          acct.fields.any? {|f| f.name =~ NoBotRegex || f.value =~ NoBotRegex}
       end
 
       ##
