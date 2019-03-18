@@ -45,13 +45,14 @@ Check the [examples](https://github.com/theZacAttacks/elephrame/tree/master/exam
 
 ### Bot Types
 
-So far the framework support 5 bot types: Periodic, Interact, PeroidInteract, Reply, Command
+So far the framework support 6 bot types: Periodic, Interact, PeroidInteract, Reply, Command, Watcher
 
 - `Periodic` supports posting on a set schedule
 - `Interact` supports callbacks for each type of interaction (favorites, boosts, replies, follows)
 - `PeriodInteract` supports both of the above (I know, this isn't a good name)
 - `Reply` only supports replying to mentions
 - `Command` supports running code when mentioned with commands it recognizes
+- `Watcher` supports watching streaming timelines (including lists, hashtags, public timeline, local timeline, and user timeline)
 
 The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
 
