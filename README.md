@@ -53,6 +53,7 @@ So far the framework support 6 bot types: Periodic, Interact, PeroidInteract, Re
 - `Reply` only supports replying to mentions
 - `Command` supports running code when mentioned with commands it recognizes
 - `Watcher` supports watching streaming timelines (including lists, hashtags, public timeline, local timeline, and user timeline)
+- `TraceryBot` supports automatically loading tracery rules. Overloads post method to automatically expand any text passed through it.
 
 The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
 

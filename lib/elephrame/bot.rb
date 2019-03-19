@@ -115,6 +115,16 @@ module Elephrame
         lists[name]
       end
 
+      ##
+      # A helper method that is a wrapper around alias_method
+      # (just to make some code easier to read)
+      #
+      # @param method [Symbol] symbol with the name of a method
+      # @param new_name [Symbol] symbol with the new name for the method
+      def self.backup_method(method, new_name)
+        alias_method new_name, method
+      end
+      
       private
 
       ##
@@ -137,7 +147,6 @@ module Elephrame
         end
         return true
       end
-      
     end
   end
 end

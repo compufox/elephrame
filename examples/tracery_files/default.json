@@ -1,0 +1,11 @@
+{
+    "origin": "#greeting#, World! I'm #sexuality#!",
+    "greeting": [ "Hello",
+		  "Greetings",
+		  "Salutations" ],
+    "sexuality": [ "gay",
+		   "pan",
+		   "bi",
+		   "ace",
+		   "aro"]
+}
