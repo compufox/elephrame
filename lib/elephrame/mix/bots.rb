@@ -53,6 +53,7 @@ module Elephrame
     
     class TraceryBot < BaseBot
       backup_method :post, :actually_post
+      
       include Elephrame::Streaming
       include Elephrame::Scheduler
       include Elephrame::Reply

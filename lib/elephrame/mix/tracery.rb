@@ -4,9 +4,8 @@ require 'json'
 module Elephrame
   module Trace
     include Tracery
-    
-    # files is hash { FILENAME => FILECONTENT }
-    attr_reader :files
+
+    # grammar is a hash { FILENAME => TRACERY RULES }
     attr_writer :grammar
 
     ##
@@ -18,19 +17,24 @@ module Elephrame
     def setup_tracery dir_path
       raise "Provided path not a directory" unless Dir.exist?(dir_path)
 
-      @files = {}
+      @grammar = {}
       Dir.open(dir_path) do |dir|
         dir.each do |file|
           # skip our current and parent dir
           next if file =~ /^\.\.?$/
 
           # read the rule file into the files hash
-          @files[file.split('.').first] =
-            JSON.parse(File.read("#{dir_path}/#{file}"))
+          @grammar[file.split('.').first] =
+            createGrammar(JSON.parse(File.read("#{dir_path}/#{file}")))
         end
       end
 
-      @grammar = createGrammar(@files['default']) unless @files['default'].nil?
+      # go ahead and makes a default mention-handler
+      unless @grammar['reply'].nil?
+        on_reply = Proc.new { |bot|
+          bot.reply_with_mentions(@grammar['reply'].flatten('#default#'))
+        }
+      end
     end
 
     
@@ -39,12 +43,22 @@ module Elephrame
     #
     # @param text [String] the tracery text to expand before posting
     # @param options [Hash] a hash of arguments to pass to post
+    # @option options rules [String] the grammar rules to load
+    # @option options visibility [String] visibility level
+    # @option options spoiler [String] text to use as content warning
+    # @option options reply_id [String] id of post to reply to
+    # @option options hide_media [Bool] should we hide media?
+    # @option options media [Array<String>] array of file paths
     
-    def post_and_expand(text, *options)
+    def expand_and_post(text, *options)
       opts = Hash[*options]
-      actually_post(@grammar.flatten(text), **opts)
+      rules = opts.fetch('rules', 'default')
+      actually_post(@grammar[rules].flatten(text),
+                    **opts.reject {|k|
+                      k == :rules
+                    })
     end
 
-    alias_method :post, :post_and_expand
+    alias_method :post, :expand_and_post
   end
 end
