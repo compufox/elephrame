@@ -116,11 +116,32 @@ module Elephrame
       end
 
       ##
+      # Gets the ID of an account given the user's handle or username
+      #
+      # @param account_name [String] either the user's full handle or
+      #    their username. E.g., zac@computerfox.xyz, zac
+      # @return [String] ID of account
+      
+      def fetch_account_id(account_name)
+        name = account_name.reverse.chomp('@').reverse
+        search = @client.search("@#{name}")
+
+        accounts = {}
+        search.accounts.each do |acct|
+          accounts[acct.acct] = acct.id
+          accounts[acct.username] = acct.id
+        end
+
+        accounts[name]
+      end
+
+      ##
       # A helper method that is a wrapper around alias_method
       # (just to make some code easier to read)
       #
       # @param method [Symbol] symbol with the name of a method
       # @param new_name [Symbol] symbol with the new name for the method
+        
       def self.backup_method(method, new_name)
         alias_method new_name, method
       end

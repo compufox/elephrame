@@ -53,7 +53,7 @@ So far the framework support 6 bot types: Periodic, Interact, PeroidInteract, Re
 - `Reply` only supports replying to mentions
 - `Command` supports running code when mentioned with commands it recognizes
 - `Watcher` supports watching streaming timelines (including lists, hashtags, public timeline, local timeline, and user timeline)
-- `TraceryBot` supports automatically loading tracery rules. Overloads post method to automatically expand any text passed through it.
+- `TraceryBot` supports automatically loading tracery rules. Overloads post method to automatically expand any text passed through it. This bot type provides certain options that ease the use of tracery grammar rules, please see examples and/or documentation for more explanation.
 
 The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
 
@@ -76,6 +76,7 @@ Exposed methods from bot object:
 - `find_ancestor(id, depth = 10, stop_at = 1)` looks backwards through reply chains for the most recent post the bot made starting at post `id` until it hits `depth` number of posts, or finds `stop_at` number of it's own posts
 - `no_bot?(account_id)` returns true if user with `account_id` has some form of "#NoBot" in their bio or their profile fields
 - `fetch_list_id(name)` return the id of a list with given name `name`
+- `fetch_account_id(account_name)` return the id of an account with given handle `account_name`
 
 (See RubyDocs for source code documentation)
 
