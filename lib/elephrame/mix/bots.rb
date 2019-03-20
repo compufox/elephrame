@@ -83,7 +83,7 @@ module Elephrame
       def run
         run_scheduled &Proc.new
         
-        unless on_reply.nil?
+        unless @on_reply.nil?
           run_reply
         else
           @scheduler.join

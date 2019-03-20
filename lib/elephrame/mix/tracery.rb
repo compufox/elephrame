@@ -6,7 +6,7 @@ module Elephrame
     include Tracery
 
     # grammar is a hash { FILENAME => TRACERY RULES }
-    attr_writer :grammar
+    attr_accessor :grammar
 
     ##
     # loads all of our tracery files into our +files+ hash
@@ -30,9 +30,10 @@ module Elephrame
       end
 
       # go ahead and makes a default mention-handler
+      #  if we have a reply rule file
       unless @grammar['reply'].nil?
-        on_reply = Proc.new { |bot|
-          bot.reply_with_mentions(@grammar['reply'].flatten('#default#'))
+        on_reply { |bot|
+          bot.reply_with_mentions('#default#', rules: 'reply')
         }
       end
     end
@@ -52,7 +53,7 @@ module Elephrame
     
     def expand_and_post(text, *options)
       opts = Hash[*options]
-      rules = opts.fetch('rules', 'default')
+      rules = opts.fetch(:rules, 'default')
       actually_post(@grammar[rules].flatten(text),
                     **opts.reject {|k|
                       k == :rules
