@@ -35,7 +35,7 @@ module Elephrame
     # @param usage [String] 
     
     def set_help usage
-      add_command 'help' do |bot, content, status|
+      add_command 'help' do |bot|
         bot.reply("#{usage}")
       end
     end

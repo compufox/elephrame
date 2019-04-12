@@ -82,12 +82,11 @@ module Elephrame
       
       def run
         run_scheduled &Proc.new
-        
-        unless @on_reply.nil?
-          run_reply
-        else
-          @scheduler.join
-        end
+
+        # if we have any logic for on_reply, we run that
+        #  otherwise we go past it and wait for our scheduler to finish
+        run_reply unless @on_reply.nil?
+        @scheduler.join
       end
     end
   end

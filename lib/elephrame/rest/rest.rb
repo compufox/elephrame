@@ -23,7 +23,7 @@ module Elephrame
         @schedule = j
         yield(self)
       end
-      @scheduler.join unless not @streamer.nil?
+      @scheduler.join if @streamer.nil?
     end
 
     alias_method :run, :run_scheduled
