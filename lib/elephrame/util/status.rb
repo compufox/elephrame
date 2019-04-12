@@ -13,6 +13,16 @@ module Mastodon
         .gsub(/<("[^"]*"|'[^']*'|[^'">])*>/, '')
         .gsub('&gt;', '>')
         .gsub('&lt;', '<')
+        .gsub('&apos;', '\'')
+    end
+
+    ##
+    # Returns whether or not the status is a reblogged status
+    #
+    # @return [Boolean]
+    
+    def is_reblog?
+      not @attributes['reblog'].nil?
     end
   end
 end
