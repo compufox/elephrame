@@ -1,6 +1,7 @@
 require_relative '../rest/rest'
 require_relative '../streaming/streaming'
 require_relative './tracery'
+require_relative './generative'
 require_relative '../bot'
 
 module Elephrame
@@ -89,5 +90,55 @@ module Elephrame
         @scheduler.join
       end
     end
+
+    ##
+    # A basic Ebooks bot template
+    
+    class Ebooks < GenerativeBot
+      attr :update_interval,
+           :last_id,
+           :fetch_count
+
+      ##
+      # Creates a new Ebooks bot
+      #
+      # @param interval [String] how often should the bot post on it's own
+      # @param opts [Hash] options for the bot
+      # @option opt cw [String]
+      # @option opt fetch_count [Integer] the amount of posts to fetch
+      # @option opt update_interval [String] how often to scrape new posts
+      #        from the accounts the bot follows
+      # @option opt retry_limit [Integer] the amount of times to retry
+      #        generating a post
+      
+      def initialize(interval, opts = {})
+        super
+        
+        add_command 'update' do
+          fetch_posts
+        end
+      end
+
+      ##
+      # Fetch posts from the accounts the bot follows
+      
+      def fetch_posts
+        
+      end
+
+      ##
+      # Run the Ebooks bot
+      
+      def run
+        # set up our scheduler to scrape posts
+        @scheduler.repeat @update_interval do
+          fetch_posts
+        end
+
+        # call generativebot's run method
+        super
+      end
+    end
+    
   end
 end
