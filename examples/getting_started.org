@@ -1,0 +1,29 @@
+* Getting Started
+
+** Ruby
+
+*** Installing
+
+*** Playing around
+
+*** Basic Syntax
+
+*** Blocks
+
+*** String Interpolation
+
+** Gems
+
+*** What are gems?
+
+*** How to install them
+
+*** Bundler
+
+**** Project Structure
+
+**** Gemfile
+
+** Elephrame
+
+*** Bot Types
