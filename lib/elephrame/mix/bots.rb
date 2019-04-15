@@ -110,6 +110,8 @@ module Elephrame
       #        from the accounts the bot follows
       # @option opt retry_limit [Integer] the amount of times to retry
       #        generating a post
+      # @option opt filename [String] path to a file where we will save our
+      #        backing ebooks model data
       
       def initialize(interval, opts = {})
         super
@@ -117,13 +119,93 @@ module Elephrame
         add_command 'update' do
           fetch_posts
         end
+
+        @last_id = {}
+
+        initial_fetch if @model_hash[:statuses].empty?
       end
 
+      ##
+      # Method to go and fetch all posts
+      #  should be ran first
+      
+      def initial_fetch
+        @following.each do |account|
+          # get the newest post from this account and save the id
+          newest_id = @client.statuses(account,
+                                       exclude_reblogs: true
+                                       limit: 1)
+          @last_id[account] = newest_id
+          
+          posts = @client.statuses(account,
+                                   exclude_reblogs: true,
+                                   limit: @fetch_count,
+                                   max_id: newest_id)
+
+          # while we still have posts
+          while not posts.size.zero?
+            posts.each do |post|
+              # add the new post to our hash
+              add_post_to_hash post
+              
+              # set our cached id to the latest post id
+              newest_id = post.id
+            end
+
+            # fetch more posts
+            posts = @client.statuses(account,
+                                     exclude_reblogs: true,
+                                     limit: @fetch_count,
+                                     max_id: newest_id)
+          end
+        end
+        save_file @filename
+        @model.consume! @model_hash
+      end
+      
       ##
       # Fetch posts from the accounts the bot follows
       
       def fetch_posts
-        
+        added_posts = { statuses: [],
+                        mentions: [] }
+        @following.each do |account|
+
+          posts = @client.statuses(account,
+                                   exclude_reblogs: true,
+                                   limit: @fetch_count,
+                                   since_id: @last_id[account])
+          while not posts.size.zero?
+          
+            posts.each do |post|
+              post.class
+                .module_eval { alias_method :content, :strip } if @strip_html
+              
+              
+              if post.in_reply_to_id.nil?
+                added_posts[:statuses] << post.content
+              else
+                added_posts[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
+              end
+            end
+            
+            posts = @client.statuses(account,
+                                     exclude_reblogs: true,
+                                     limit: @fetch_count,
+                                     since_id: @last_id[account])
+          end
+        end
+
+        # consume our new posts, and add them to our original hash
+        @model.consume! added_posts
+        @model_hash.merge! added_posts do |key, orig_val, new_val|
+          new_val.each do |value|
+            orig_val << value
+          end
+        end
+
+        # then we save 
+        save_file @filename
       end
 
       ##
@@ -137,6 +219,31 @@ module Elephrame
 
         # call generativebot's run method
         super
+      end
+
+      private
+
+      ##
+      # adds a post into the +post_hash+ hash
+      #  makes sure it gets put under the appropriate key
+      #
+      # @param post [Mastodon::Status]
+      
+      def add_post_to_hash post
+        # make sure we strip out the html crap
+        post.class
+          .module_eval { alias_method :content, :strip } if @strip_html
+        
+        # decide which array the post should go into, based
+        #  on if it's a reply or not
+        # also make sure to strip out any account names
+        if post.in_reply_to_id.nil?
+          @model_hash[:statuses] << post.content
+        else
+          @model_hash[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
+        end
+
+        nil
       end
     end
     

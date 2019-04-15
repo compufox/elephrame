@@ -6,19 +6,23 @@ module Elephrame
     include Elephrame::Command
 
     attr_accessor :cw
-    attr_reader :filter_words
     attr :filter,
+         :filter_words,
          :filter_by,
          :following,
          :model,
          :char_limit,
          :retry_limit,
-         :visibility
+         :visibility,
+         :model_hash,
+         :filename
 
     backup_method :post, :actually_post
+    SavedFileName = 'model.yml'
 
     def initialize(interval, options = {})
       require 'moo_ebooks'
+      require 'yaml'
 
       # initialize our botness
       super()
@@ -28,17 +32,25 @@ module Elephrame
       setup_scheduler interval
       setup_command
 
-      # make an empty model, a default regex
-      #  and fetch the max characters for posts (or 500 :shrug:)
+      # set some defaults and initialize some vars
       @model = Ebooks::Model.new
+      @model_hash = { statuses: [],
+                      mentions: [] }
       @filter = /./
+      @following = []
       @char_limit = @client.instance.max_toot_chars || 500
       @retry_limit = options[:retry_limit] || 10
       @cw = options[:cw] || 'markov post'
       @visibility = options[:visibility] || 'unlisted'
+      @filename = options[:filename] || SavedFileName
 
+      # load our hash if it exists
+      if File.exists? @filename
+        load_file @filename
+      end
+      
       # add our commands
-
+      #
       # !delete will delete the status it's in reply to
       add_command 'delete' do |bot, content, status|
         @client.destroy_status(status.in_reply_to_id) if @following.include? status.account.id
@@ -59,12 +71,21 @@ module Elephrame
                             limit: @char_limit)
         tries = 0
 
+        # retry our status creation until we get something that
+        #  passes our filters
         while not bot.reply_with_mentions(text, spoiler: @cw) and
              tries < @retry_limit
           text = @model.reply(status.content.gsub(/@.+?(@.+?)?\s/, ''),
                               limit: @char_limit)
           tries += 1
         end
+      end
+
+      # get our own account id and save the ids of the accounts
+      #  we're following
+      acct_id = @client.verify_credentials.id
+      @client.following(acct_id).each do |account|
+        @following << account.id
       end
     end
 
@@ -95,6 +116,25 @@ module Elephrame
     end
 
     ##
+    # loads a yaml file containing our model data
+    #
+    # @param filename [String] file to read in from
+    
+    def load_file filename
+      @model_hash = YAML.load_file(filename)
+      @model.consume!(@model_hash)
+    end
+
+    ##
+    # Saves a yaml file containing our model data
+    #
+    # @param filename [String] file to write out to
+    
+    def save_file filename
+      File.write(filename, @model_hash.to_yaml)
+    end
+
+    ##
     # Sets the filter regex
     #  if arg is a string array, 'or's the strings together
     #  if it's a regexp it just sets it to the value
@@ -107,6 +147,16 @@ module Elephrame
       @filter = arg
     end
 
+    ##
+    # Returns a string representing all of the current
+    #  words being checked in the filter
+    #
+    # @returns [String] comma separated list of all filter words
+    
+    def filter_words
+      @filter_words.join(', ')
+    end
+    
     ##
     # Adds a word into the filter list
     #
@@ -144,8 +194,8 @@ module Elephrame
       # default passed to false and then see if
       #  the supplied text gets through our filters
       passed = false
+      passed = text =~ @filter 
       passed = @filter_by.call(text) unless @filter_by.nil?
-      passed = text =~ @filter
       
       actually_post(text, **opts) if passed
     end

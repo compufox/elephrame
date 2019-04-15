@@ -32,9 +32,9 @@ module Elephrame
       # go ahead and makes a default mention-handler
       #  if we have a reply rule file
       unless @grammar['reply'].nil?
-        on_reply { |bot|
+        on_reply do |bot|
           bot.reply_with_mentions('#default#', rules: 'reply')
-        }
+        end
       end
     end
 
