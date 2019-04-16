@@ -2,6 +2,7 @@ PATH
   remote: .
   specs:
     elephrame (0.4.6)
+      moo_ebooks (~> 1.0.0)
       moostodon (~> 0.4.0)
       rufus-scheduler
       tracery (~> 0.7)
@@ -15,11 +16,14 @@ GEM
     concurrent-ruby (1.1.5)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
-    et-orbi (1.1.7)
+    et-orbi (1.1.8)
       tzinfo
-    fugit (1.1.8)
-      et-orbi (~> 1.1, >= 1.1.7)
+    fugit (1.1.10)
+      et-orbi (~> 1.1, >= 1.1.8)
       raabro (~> 1.1)
+    highscore (1.2.1)
+      whatlanguage (>= 1.0.0)
+    htmlentities (4.3.4)
     http (3.3.0)
       addressable (~> 2.3)
       http-cookie (~> 1.0)
@@ -30,12 +34,15 @@ GEM
     http-form_data (2.1.1)
     http_parser.rb (0.6.0)
     minitest (5.11.3)
+    moo_ebooks (1.0.2)
+      highscore (~> 1.2)
+      htmlentities (~> 4.3)
     moostodon (0.4.0)
       addressable (~> 2.5)
       buftok (~> 0)
       http (~> 3.0)
       oj (~> 3.3)
-    oj (3.7.10)
+    oj (3.7.12)
     public_suffix (3.0.3)
     raabro (1.1.6)
     rake (10.5.0)
@@ -46,8 +53,9 @@ GEM
       concurrent-ruby (~> 1.0)
     unf (0.1.4)
       unf_ext
-    unf_ext (0.0.7.5)
-    unf_ext (0.0.7.5-x64-mingw32)
+    unf_ext (0.0.7.2)
+    unf_ext (0.0.7.2-x64-mingw32)
+    whatlanguage (1.0.6)
 
 PLATFORMS
   ruby
