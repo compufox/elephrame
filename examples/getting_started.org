@@ -50,12 +50,26 @@ Hash tables are basically arrays that allow you to reference bits of data out of
 Okay so let's go back to strings and the differences between strings 'like this' and strings "like this".
 
 Let's say you've got a variable named =output_data= and you wanted to print it out with some text around it.
-In other programming language you'd have to do something like this: ="Here's the data " + output_data + " that I found!"=, but ruby allows for a really nifty thing called String Interpolation. 
-Here's how it looks: ="Here's the data #{output_data} that I found!"= 
+In other programming language you'd have to do something like this: 
+
+#+BEGIN_SRC python
+"Here's the data " + output_data + " that I found!"
+#+END_SRC
+
+but ruby allows for a really nifty thing called String Interpolation. 
+Here's how it looks:
+
+#+BEGIN_SRC ruby
+"Here's the data #{output_data} that I found!"
+#+END_SRC
 
 As you can tell, it makes it look a lot nicer and a lot easier to add variables into strings! 
 
-Not only can you put variables into strings like this, you can also put method calls! Any kind of code can go in there! ="Some really cool data: #{my_cool_method()}"=
+Not only can you put variables into strings like this, you can also put method calls! Any kind of code can go in there! 
+
+#+BEGIN_SRC ruby
+"Some really cool data: #{my_cool_method()}"
+#+END_SRC
 
 *** Blocks
 One of the coolest things about ruby is that you can pass code around fairly easily. This allows for some really neat things, but most importantly it aids in readability.
