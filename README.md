@@ -19,11 +19,11 @@ gem 'elephrame'
 
 And then execute:
 
-    $ bundle
+    bundle
 
 Or install it yourself as:
 
-    $ gem install elephrame
+    gem install elephrame
 
 ## Quickstart
 
@@ -34,14 +34,16 @@ require 'elephrame'
 
 my_bot = Elephrame::Bots::Periodic.new '3h'
 
-my_bot.run { |bot|
+my_bot.run do |bot|
   bot.post("i'm gay")
-}
+end
 ```
 
 	$ INSTANCE="https://mastodon.social" TOKEN="your_access_token" ruby bot.rb
 
 Check the [examples](https://github.com/theZacAttacks/elephrame/tree/master/examples) directory for more example bots
+
+If you're new to ruby development in general there is also a [getting started](https://github.com/theZacAttacks/elephrame/tree/master/examples/getting_started.org) document in the examples folder that I would recommend you to read. It takes a high level approach to getting started with ruby, some basic syntax, working with gems, basic project structure, and more!
 
 ### Bot Types
 

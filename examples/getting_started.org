@@ -1,8 +1,32 @@
 * Getting Started
 
+** Table of Contents
+
+- [[#ruby][Ruby]]
+  + [[#rb_install][Installing]]
+  + [[#rb_irb][Playing around]]
+  + [[#rb_syntax][Basic Syntax]]
+  + [[#rb_interpolation][String Interpolation]]
+  + [[#rb_blocks][Blocks]]
+- [[#gem][Gems]]
+  + [[#gem_expl][What are Gems?]]
+  + [[#gem_install][Install Gems]]
+  + [[#gem_bundler][Bundler]]
+- [[#exec][Running a Script]]
+  + [[#exec_plain][Without Bundler]]
+  + [[#exec_bundler][With Bundler]]
+- [[#elephrame][Elephrame]]
+  - [[#ele_types][Bot Types]]
+
 ** Ruby
+:PROPERTIES:
+:CUSTOM_ID: ruby
+:END:
 
 *** Installing
+:PROPERTIES:
+:CUSTOM_ID: rb_intall
+:END:
 If you use Linux/BSD then use your package manager to install ruby.
 
 If you're on Mac you should have an older version of ruby installed. If you want to install a newer version I would recommend looking into [[https://brew.sh][homebrew]] and using it to install an updated ruby version.
@@ -16,6 +40,9 @@ Open up your command line (cmd on Windows, Terminal on Linux/BSD/Mac) and type i
 If everything has been set up properly it'll print out the version of ruby you're using!
 
 *** Playing around
+:PROPERTIES:
+:CUSTOM_ID: rb_irb
+:END:
 To play around in an interactive environment open up your command line and type in =irb=  (Interactive RuBy)
 
 This drops you into an interactive ruby shell where you are free to experiment and play around with new ideas without having to write an entirely new file.
@@ -23,6 +50,9 @@ This drops you into an interactive ruby shell where you are free to experiment a
 Feel free to play around in this! Any code I have written in here can be executed in this environment.
 
 *** Basic Syntax
+:PROPERTIES:
+:CUSTOM_ID: rb_syntax
+:END:
 There are a lot of data types in ruby:
 
 - strings
@@ -47,6 +77,9 @@ Hash tables are basically arrays that allow you to reference bits of data out of
 
 
 *** String Interpolation
+:PROPERTIES:
+:CUSTOM_ID: rb_interpolations
+:END:
 Okay so let's go back to strings and the differences between strings 'like this' and strings "like this".
 
 Let's say you've got a variable named =output_data= and you wanted to print it out with some text around it.
@@ -72,17 +105,29 @@ Not only can you put variables into strings like this, you can also put method c
 #+END_SRC
 
 *** Blocks
+:PROPERTIES:
+:CUSTOM_ID: rb_blocks
+:END:
 One of the coolest things about ruby is that you can pass code around fairly easily. This allows for some really neat things, but most importantly it aids in readability.
 
 
 
 ** Gems
+:PROPERTIES:
+:CUSTOM_ID: gem
+:END:
 
-*** What are gems?
+*** What are Gems?
+:PROPERTIES:
+:CUSTOM_ID: gem_expl
+:END:
 In the world of ruby third-party libraries are referred to as gems. They are offered by many places, but the primary source of gems is [[https://rubygems.org][RubyGems]]. There are a *lot* of gems there. Go and check some of them out!
 
-*** How to install them
-Knowing about gems is nice and all but how do you get them onto your system? Well, when you installed ruby you got a nice little utility installed as well called =gem=. 
+*** Install Gems
+:PROPERTIES:
+:CUSTOM_ID: gem_install
+:END:
+Knowing about gems is nice and all but how do you get them onto your system? Well, when you installed ruby you got a nice little utility installed, called =gem=. 
 
 So let's go back to your command line, if you're still in =irb= you can either open a new window or type =quit= to exit it. Once you're back at the main command line interface run =gem -h= to have the gem utility print out a little help text.
 
@@ -91,13 +136,16 @@ Let's go ahead and install a gem that we'll be using for the next section: bundl
 =gem install bundler=
 
 *** Bundler
+:PROPERTIES:
+:CUSTOM_ID: gem_bundler
+:END:
 Bundler is a cool utility that allows you to install gems on a per-project level, keeping the system gem cache clean! If you're following along then you should have it installed now, so lets see some of what it can do: =bundle -h=
 
 As you can see there are a lot of subcommands! The ones that you'll primarily be using are 'install' and 'exec'. The install command, appropriately installs a gem onto your system. The exec command is a little more abstract. It takes whatever other commands after 'exec' and runs them in the context of that project. 
 
 So if you have a certain gem installed in a project and you want to play around with using it with =irb= then you would run =bundle exec irb= and then you'd be able to have an interactive playground with all the gems from that project! 
 
-**** Gemfile
+**** <<gem_gemfile>>Gemfile
 This is neat and all, but how does bundler know what gems a specific project needs? Well, thats where the Gemfile comes into play. The Gemfile contains the source, specifications, and versions of any gems you want to use in your project. Here is an example Gemfile that tells bundler to use the elephrame gem!
 
 #+BEGIN_SRC ruby
@@ -108,7 +156,7 @@ gem 'elephrame'
 
 There are a lot of extra options that you can use in a Gemfile, but at its basest this is how to use one!
 
-**** Project Structure
+**** <<gem_files>>Project Structure
 So now that we've got a basic Gemfile, where do we put it? It belongs at the top level of your project! So, assuming we have our project in its own folder and our project's main ruby file is called =main.rb=, our file structure would look something like this:
 
 #+BEGIN_SRC
@@ -122,12 +170,39 @@ And that's it!
 After you have your project setup like this, you need to tell bundler to install your gems. To do that all you have to do is have your project opened in your command line and run =bundle install= and it'll get the rest set up properly!
 
 ** Running a script
+:PROPERTIES:
+:CUSTOM_ID: exec
+:END:
+After you've put all the work into a cool app or project you'd want to be able to run it right? Since ruby is an interpreted language it doesn't need to be compiled before we execute it. However, this also means that we can't just execute our new program, we have to tell the ruby interpretor to read the file and start executing it.
 
+Both of the following examples assume a project strutcure like the above.
 
 *** Without Bundler
+:PROPERTIES:
+:CUSTOM_ID: exec_plain
+:END:
+If your project does not use bundler then there are a few steps you don't have to take, so we can just jump right to executing the script.
+
+Open your command line interface, go to your project's folder and execute: =ruby main.rb=
+
 
 *** With Bundler
+:PROPERTIES:
+:CUSTOM_ID: exec_bundler
+:END:
+If your project does use bundler then we have to first make sure that all of your gem dependecies are up to date: =bundle install=
+
+Once that finishes, open your command line interface, go to your project's folder and execute: =bundle exec ruby main.rb=
+
+We use =bundle exec= because we need ruby to run in the context of the project and use the gems that the project needs.
+
 
 ** Elephrame
+:PROPERTIES:
+:CUSTOM_ID: elephrame
+:END:
 
 *** Bot Types
+:PROPERTIES:
+:CUSTOM_ID: ele_bots
+:END:
