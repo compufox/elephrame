@@ -42,5 +42,6 @@ Gem::Specification.new do |spec|
   
   spec.add_dependency 'rufus-scheduler'
   spec.add_dependency 'moostodon', '~> 0.4.0'
+  spec.add_dependency 'moo_ebooks'
   spec.add_dependency 'tracery', '~> 0.7'
 end

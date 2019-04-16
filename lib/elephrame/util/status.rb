@@ -14,6 +14,7 @@ module Mastodon
         .gsub('&gt;', '>')
         .gsub('&lt;', '<')
         .gsub('&apos;', '\'')
+        .gsub('&quot;', '"')
     end
 
     ##

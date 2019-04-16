@@ -94,7 +94,7 @@ module Elephrame
     ##
     # A basic Ebooks bot template
     
-    class Ebooks < GenerativeBot
+    class EbooksBot < GenerativeBot
       attr :update_interval,
            :last_id,
            :fetch_count
@@ -133,10 +133,14 @@ module Elephrame
         @following.each do |account|
           # get the newest post from this account and save the id
           newest_id = @client.statuses(account,
-                                       exclude_reblogs: true
-                                       limit: 1)
+                                       exclude_reblogs: true,
+                                       limit: 1).first.id
           @last_id[account] = newest_id
-          
+
+          # could hit the api limit here, need some kind of checks for that
+          #  maybe dump what we have currently, and reschedule?
+          #  or should we just save/consume and continue?
+          #  OR we could do both :thaenking:
           posts = @client.statuses(account,
                                    exclude_reblogs: true,
                                    limit: @fetch_count,
