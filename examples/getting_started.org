@@ -5,9 +5,9 @@
 *** Installing
 If you use Linux/BSD then use your package manager to install ruby.
 
-If you're on Mac you should have an older version of ruby installed. If you want to install a newer version I would recommend looking into [homebrew](https://brew.sh) and using it to install an updated ruby version.
+If you're on Mac you should have an older version of ruby installed. If you want to install a newer version I would recommend looking into [[https://brew.sh][homebrew]] and using it to install an updated ruby version.
 
-If you're on Windows there is [RubyInstaller](https://rubyinstaller.org/downloads/). Make sure you choose the one that has the devkit! It's important uwu
+If you're on Windows there is [[https://rubyinstaller.org/downloads/][RubyInstaller]]. Make sure you choose the one that has the devkit! It's important uwu
 
 Once you have ruby installed we can check and make sure!
 
@@ -65,7 +65,7 @@ One of the coolest things about ruby is that you can pass code around fairly eas
 ** Gems
 
 *** What are gems?
-In the world of ruby third-party libraries are referred to as gems. They are offered by many places, but the primary source of gems is [RubyGems](https://rubygems.org). There are a *lot* of gems there. Go and check some of them out!
+In the world of ruby third-party libraries are referred to as gems. They are offered by many places, but the primary source of gems is [[https://rubygems.org][RubyGems]]. There are a *lot* of gems there. Go and check some of them out!
 
 *** How to install them
 Knowing about gems is nice and all but how do you get them onto your system? Well, when you installed ruby you got a nice little utility installed as well called =gem=. 
