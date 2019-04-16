@@ -96,8 +96,7 @@ module Elephrame
     
     class EbooksBot < GenerativeBot
       attr :update_interval,
-           :last_id,
-           :fetch_count
+           :old_id
 
       ##
       # Creates a new Ebooks bot
@@ -105,7 +104,6 @@ module Elephrame
       # @param interval [String] how often should the bot post on it's own
       # @param opts [Hash] options for the bot
       # @option opt cw [String]
-      # @option opt fetch_count [Integer] the amount of posts to fetch
       # @option opt update_interval [String] how often to scrape new posts
       #        from the accounts the bot follows
       # @option opt retry_limit [Integer] the amount of times to retry
@@ -120,96 +118,150 @@ module Elephrame
           fetch_posts
         end
 
-        @last_id = {}
-
-        initial_fetch if @model_hash[:statuses].empty?
+        # if we don't have what a newest post id then we fetch them
+        #  for each account
+        if @model_hash[:last_id].empty?
+          @old_id = {}
+          
+          @following.each do |account|
+            # get the newest post from this account and save the id
+            newest_id = @client.statuses(account,
+                                         exclude_reblogs: true,
+                                         limit: 1).first.id
+            @model_hash[:last_id][account] = newest_id
+            @old_id[account] = newest_id
+          end
+        end
+        
+        fetch_old_posts if @model_hash[:statuses].empty?
       end
 
       ##
       # Method to go and fetch all posts
       #  should be ran first
       
-      def initial_fetch
-        @following.each do |account|
-          # get the newest post from this account and save the id
-          newest_id = @client.statuses(account,
-                                       exclude_reblogs: true,
-                                       limit: 1).first.id
-          @last_id[account] = newest_id
-
-          # could hit the api limit here, need some kind of checks for that
-          #  maybe dump what we have currently, and reschedule?
-          #  or should we just save/consume and continue?
-          #  OR we could do both :thaenking:
-          posts = @client.statuses(account,
-                                   exclude_reblogs: true,
-                                   limit: @fetch_count,
-                                   max_id: newest_id)
-
-          # while we still have posts
-          while not posts.size.zero?
-            posts.each do |post|
-              # add the new post to our hash
-              add_post_to_hash post
-              
-              # set our cached id to the latest post id
-              newest_id = post.id
-            end
-
-            # fetch more posts
+      def fetch_old_posts
+        puts "fetching old posts" if ENV['DEBUG']
+        
+        begin
+          api_calls = 1
+          errored = false
+          
+          @following.each do |account|
+            # okay so
+            #  we keep track of how many get requests we're doing and before
+            #  the limit (300) we schedule for 5min and go on, saving what we got
             posts = @client.statuses(account,
                                      exclude_reblogs: true,
-                                     limit: @fetch_count,
-                                     max_id: newest_id)
+                                     limit: 40,
+                                     max_id: @old_id[account])
+            processed_count = 0 if ENV['DEBUG']
+            
+            # while we still have posts and haven't gotten near the api limit
+            while not posts.size.zero? and api_calls < 280
+              posts.each do |post|
+                # add the new post to our hash
+                add_post_to_hash post
+                
+                # set our cached id to the latest post id
+                @old_id[account] = post.id
+                processed_count += 1 if ENV['DEBUG']
+              end
+              
+              puts "processed #{processed_count} posts...fetching more" if ENV['DEBUG']
+              
+              # fetch more posts
+              posts = @client.statuses(account,
+                                       exclude_reblogs: true,
+                                       limit: 40,
+                                       max_id: @old_id[account])
+              api_calls += 1
+            end
+            
+            break if api_calls >= 280
+          end
+          
+        rescue Mastodon::Error::TooManyRequests
+          puts "hit the api limit, saving what we have and scheduling to continue" if ENV['DEBUG']
+          errored = true
+          
+        ensure
+          save_file @filename
+          @model.consume! @model_hash
+
+          if api_calls >= 280 or errored 
+            @scheduler.in '5m' do
+              fetch_old_posts
+            end
           end
         end
-        save_file @filename
-        @model.consume! @model_hash
       end
       
       ##
       # Fetch posts from the accounts the bot follows
       
-      def fetch_posts
-        added_posts = { statuses: [],
-                        mentions: [] }
-        @following.each do |account|
-
-          posts = @client.statuses(account,
-                                   exclude_reblogs: true,
-                                   limit: @fetch_count,
-                                   since_id: @last_id[account])
-          while not posts.size.zero?
+      def fetch_new_posts
+        begin
+          added_posts = { statuses: [],
+                          mentions: [] }
+          api_calls = 1
+          errored = false
           
-            posts.each do |post|
-              post.class
-                .module_eval { alias_method :content, :strip } if @strip_html
-              
-              
-              if post.in_reply_to_id.nil?
-                added_posts[:statuses] << post.content
-              else
-                added_posts[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
-              end
-            end
+          @following.each do |account|
             
             posts = @client.statuses(account,
                                      exclude_reblogs: true,
-                                     limit: @fetch_count,
-                                     since_id: @last_id[account])
+                                     limit: 40,
+                                     since_id: @model_hash[:last_id][account])
+            
+            while not posts.size.zero? and api_calls < 280
+              posts.reverse_each do |post|
+                @model_hash[:last_id][account] = post.id
+                
+                post.class
+                  .module_eval { alias_method :content, :strip } if @strip_html
+                
+                
+                if post.in_reply_to_id.nil?
+                  added_posts[:statuses] << post.content
+                else
+                  added_posts[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
+                end
+              end
+              
+              posts = @client.statuses(account,
+                                       exclude_reblogs: true,
+                                       limit: 40,
+                                       since_id: @model_hash[:last_id][account])
+              api_calls += 1
+            end
+            
+            break if api_calls >= 280
           end
-        end
-
-        # consume our new posts, and add them to our original hash
-        @model.consume! added_posts
-        @model_hash.merge! added_posts do |key, orig_val, new_val|
-          new_val.each do |value|
-            orig_val << value
+          
+        rescue Mastodon::Errors::TooManyRequests
+          errored = true
+          
+        ensure
+          # consume our new posts, and add them to our original hash
+          @model.consume! added_posts
+          @model_hash.merge! added_posts do |key, orig_val, new_val|
+            if key == :statuses or key == :mentions
+              new_val.each do |value|
+                orig_val << value
+              end
+            end
           end
+          
+          if api_calls >= 280 or errored
+            @scheduler.in '5m' do
+              fetch_new_posts
+            end
+          end
+          
+          # then we save 
+          save_file @filename
         end
-
-        # then we save 
-        save_file @filename
       end
 
       ##

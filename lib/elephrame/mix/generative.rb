@@ -36,7 +36,8 @@ module Elephrame
         # set some defaults and initialize some vars
         @model = Ebooks::Model.new
         @model_hash = { statuses: [],
-                        mentions: [] }
+                        mentions: [],
+                        last_id:  {} }
         @filter = /./
         @following = []
         @char_limit = @client.instance.max_toot_chars || 500
@@ -46,9 +47,7 @@ module Elephrame
         @filename = options[:filename] || SavedFileName
         
         # load our hash if it exists
-        if File.exists? @filename
-          load_file @filename
-        end
+        load_file @filename if File.exists? @filename
         
         # add our commands
         #
