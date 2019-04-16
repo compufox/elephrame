@@ -16,10 +16,12 @@ module Elephrame
            :retry_limit,
            :visibility,
            :model_hash,
-           :filename
+           :model_filename,
+           :filter_filename
       
       backup_method :post, :actually_post
       SavedFileName = 'model.yml'
+      SavedFilterFileName = 'filter.yml'
       
       def initialize(interval, options = {})
         require 'moo_ebooks'
@@ -39,21 +41,27 @@ module Elephrame
                         mentions: [],
                         last_id:  {} }
         @filter = /./
+        @filter_words = []
         @following = []
         @char_limit = @client.instance.max_toot_chars || 500
         @retry_limit = options[:retry_limit] || 10
         @cw = options[:cw] || 'markov post'
         @visibility = options[:visibility] || 'unlisted'
-        @filename = options[:filename] || SavedFileName
+        @model_filename = options[:model_filename] || SavedFileName
+        @filter_filename = options[:filter_filename] || SavedFilterFileName
         
-        # load our hash if it exists
-        load_file @filename if File.exists? @filename
+        # load our model if it exists
+        @model_hash = load_file(@model_filename) if File.exists? @model_filename
+        @filter_words = load_file(@filter_filename) if File.exists? @filter_filename
         
         # add our commands
         #
         # !delete will delete the status it's in reply to
         add_command 'delete' do |bot, content, status|
-          @client.destroy_status(status.in_reply_to_id) if @following.include? status.account.id
+          if @following.include? status.account.id
+            @client.destroy_status(status.in_reply_to_id)
+            bot.reply('status deleted')
+          end
         end
         
         # !filter will add every word from the post into the word filter
@@ -62,22 +70,27 @@ module Elephrame
             content.split.each do |word|
               add_filter_word word
             end
+            save_file @filter_filename, @filter_words.to_yaml
+            bot.reply("'#{content}' added to internal filter")
+          end
+        end
+
+        # add a help command that explains the other commands
+        add_command 'help' do |bot|
+          if @following.include? status.account.id
+            bot.reply(HelpMessage)
           end
         end
         
         # set up a default for replying
         on_reply do |bot, status|
-          text = @model.reply(status.content.gsub(/@.+?(@.+?)?\s/, ''),
-                              limit: @char_limit)
-          tries = 0
-          
           # retry our status creation until we get something that
           #  passes our filters
-          while not bot.reply_with_mentions(text, spoiler: @cw) and
-               tries < @retry_limit
+          @retry_limit.times do
             text = @model.reply(status.content.gsub(/@.+?(@.+?)?\s/, ''),
-                                limit: @char_limit)
-            tries += 1
+                                @char_limit)
+            break unless bot.reply_with_mentions(text,
+                                                 spoiler: @cw).nil?
           end
         end
         
@@ -95,15 +108,11 @@ module Elephrame
       def run
         # see scheduler.rb
         run_scheduled do |bot|
-          text = @model.update(limit: @char_limit)
-          tries = 0
-          
-          while not bot.post(text,
-                             spoiler: @cw,
-                             visibility: @visibility) and
-               tries < @retry_limit
-            text = @model.update(limit: @char_limit)
-            tries += 1
+          @retry_limit.times do
+            text = @model.update(@char_limit)
+            break unless bot.post(text,
+                                  spoiler: @cw,
+                                  visibility: @visibility).nil?
           end
         end
         
@@ -121,8 +130,7 @@ module Elephrame
       # @param filename [String] file to read in from
       
       def load_file filename
-        @model_hash = YAML.load_file(filename)
-        @model.consume!(@model_hash)
+        YAML.load_file(filename)
       end
       
       ##
@@ -130,8 +138,8 @@ module Elephrame
       #
       # @param filename [String] file to write out to
       
-      def save_file filename
-        File.write(filename, @model_hash.to_yaml)
+      def save_file filename, data
+        File.write(filename, data)
       end
       
       ##
@@ -189,7 +197,8 @@ module Elephrame
       # @option options hide_media [Bool] should we hide media?
       # @option options media [Array<String>] array of file paths
       
-      def filter_and_post(text, *opts)
+      def filter_and_post(text, *options)
+        opts = Hash[*options]
         
         # default passed to false and then see if
         #  the supplied text gets through our filters

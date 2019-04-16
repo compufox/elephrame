@@ -96,8 +96,11 @@ module Elephrame
     
     class EbooksBot < GenerativeBot
       attr :update_interval,
-           :old_id
-
+           :old_id,
+           :scrape_filter
+      
+      PrivacyLevels = ['public', 'unlisted', 'private', 'direct']
+      
       ##
       # Creates a new Ebooks bot
       #
@@ -108,8 +111,13 @@ module Elephrame
       #        from the accounts the bot follows
       # @option opt retry_limit [Integer] the amount of times to retry
       #        generating a post
-      # @option opt filename [String] path to a file where we will save our
-      #        backing ebooks model data
+      # @option opt model_filename [String] path to a file where we 
+      #        will save our backing ebooks model data
+      # @option opt filter_filename [String] path to a file where we 
+      #        will save our internal filtered words data      
+      # @option opt visibility [String] the posting level the bot will default to
+      # @option opt scrape_privacy [String] the highest privacy the bot should
+      #        scrape for content
       
       def initialize(interval, opts = {})
         super
@@ -117,6 +125,10 @@ module Elephrame
         add_command 'update' do
           fetch_posts
         end
+
+        level = PrivacyLevels.index(opts[:scrape_privacy]) || 0
+        @scrape_filter = /(#{PrivacyLevels[0..level].join('|')})/
+        @update_interval = opts[:update_interval] || '2d'
 
         # if we don't have what a newest post id then we fetch them
         #  for each account
@@ -160,8 +172,9 @@ module Elephrame
             # while we still have posts and haven't gotten near the api limit
             while not posts.size.zero? and api_calls < 280
               posts.each do |post|
+                
                 # add the new post to our hash
-                add_post_to_hash post
+                add_post_to_hash post if post.visibility =~ @scrape_filter
                 
                 # set our cached id to the latest post id
                 @old_id[account] = post.id
@@ -186,7 +199,7 @@ module Elephrame
           errored = true
           
         ensure
-          save_file @filename
+          save_file @model_filename, @model_hash.to_yaml
           @model.consume! @model_hash
 
           if api_calls >= 280 or errored 
@@ -221,11 +234,12 @@ module Elephrame
                 post.class
                   .module_eval { alias_method :content, :strip } if @strip_html
                 
-                
-                if post.in_reply_to_id.nil?
-                  added_posts[:statuses] << post.content
-                else
-                  added_posts[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
+                if post.visibility =~ @scrape_filter
+                  if post.in_reply_to_id.nil? or post.mentions.size.zero?
+                    added_posts[:statuses] << post.content
+                  else
+                    added_posts[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
+                  end
                 end
               end
               
@@ -260,7 +274,7 @@ module Elephrame
           end
           
           # then we save 
-          save_file @filename
+          save_file @model_filename, @model_hash.to_yaml
         end
       end
 
@@ -293,7 +307,7 @@ module Elephrame
         # decide which array the post should go into, based
         #  on if it's a reply or not
         # also make sure to strip out any account names
-        if post.in_reply_to_id.nil?
+        if post.in_reply_to_id.nil? or post.mentions.size.zero?
           @model_hash[:statuses] << post.content
         else
           @model_hash[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
