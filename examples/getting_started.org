@@ -11,12 +11,12 @@ If you're on Windows there is [RubyInstaller](https://rubyinstaller.org/download
 
 Once you have ruby installed we can check and make sure!
 
-Open up your command line (cmd on Windows, Terminal on Linux/BSD/Mac) and type in `ruby --version`
+Open up your command line (cmd on Windows, Terminal on Linux/BSD/Mac) and type in =ruby --version=
 
 If everything has been set up properly it'll print out the version of ruby you're using!
 
 *** Playing around
-To play around in an interactive environment open up your command line and type in `irb`  (Interactive RuBy)
+To play around in an interactive environment open up your command line and type in =irb=  (Interactive RuBy)
 
 This drops you into an interactive ruby shell where you are free to experiment and play around with new ideas without having to write an entirely new file.
 
@@ -49,13 +49,13 @@ Hash tables are basically arrays that allow you to reference bits of data out of
 *** String Interpolation
 Okay so let's go back to strings and the differences between strings 'like this' and strings "like this".
 
-Let's say you've got a variable named `output_data` and you wanted to print it out with some text around it.
-In other programming language you'd have to do something like this: `"Here's the data " + output_data + " that I found!"`, but ruby allows for a really nifty thing called String Interpolation. 
-Here's how it looks: `"Here's the data #{output_data} that I found!"` 
+Let's say you've got a variable named =output_data= and you wanted to print it out with some text around it.
+In other programming language you'd have to do something like this: ="Here's the data " + output_data + " that I found!"=, but ruby allows for a really nifty thing called String Interpolation. 
+Here's how it looks: ="Here's the data #{output_data} that I found!"= 
 
 As you can tell, it makes it look a lot nicer and a lot easier to add variables into strings! 
 
-Not only can you put variables into strings like this, you can also put method calls! Any kind of code can go in there! `"Some really cool data: #{my_cool_method()}"`
+Not only can you put variables into strings like this, you can also put method calls! Any kind of code can go in there! ="Some really cool data: #{my_cool_method()}"=
 
 *** Blocks
 One of the coolest things about ruby is that you can pass code around fairly easily. This allows for some really neat things, but most importantly it aids in readability.
@@ -68,44 +68,44 @@ One of the coolest things about ruby is that you can pass code around fairly eas
 In the world of ruby third-party libraries are referred to as gems. They are offered by many places, but the primary source of gems is [RubyGems](https://rubygems.org). There are a *lot* of gems there. Go and check some of them out!
 
 *** How to install them
-Knowing about gems is nice and all but how do you get them onto your system? Well, when you installed ruby you got a nice little utility installed as well called `gem`. 
+Knowing about gems is nice and all but how do you get them onto your system? Well, when you installed ruby you got a nice little utility installed as well called =gem=. 
 
-So let's go back to your command line, if you're still in `irb` you can either open a new window or type `quit` to exit it. Once you're back at the main command line interface run `gem -h` to have the gem utility print out a little help text.
+So let's go back to your command line, if you're still in =irb= you can either open a new window or type =quit= to exit it. Once you're back at the main command line interface run =gem -h= to have the gem utility print out a little help text.
 
 Let's go ahead and install a gem that we'll be using for the next section: bundler.
 
-`gem install bundler`
+=gem install bundler=
 
 *** Bundler
-Bundler is a cool utility that allows you to install gems on a per-project level, keeping the system gem cache clean! If you're following along then you should have it installed now, so lets see some of what it can do: `bundle -h`
+Bundler is a cool utility that allows you to install gems on a per-project level, keeping the system gem cache clean! If you're following along then you should have it installed now, so lets see some of what it can do: =bundle -h=
 
 As you can see there are a lot of subcommands! The ones that you'll primarily be using are 'install' and 'exec'. The install command, appropriately installs a gem onto your system. The exec command is a little more abstract. It takes whatever other commands after 'exec' and runs them in the context of that project. 
 
-So if you have a certain gem installed in a project and you want to play around with using it with `irb` then you would run `bundle exec irb` and then you'd be able to have an interactive playground with all the gems from that project! 
+So if you have a certain gem installed in a project and you want to play around with using it with =irb= then you would run =bundle exec irb= and then you'd be able to have an interactive playground with all the gems from that project! 
 
 **** Gemfile
 This is neat and all, but how does bundler know what gems a specific project needs? Well, thats where the Gemfile comes into play. The Gemfile contains the source, specifications, and versions of any gems you want to use in your project. Here is an example Gemfile that tells bundler to use the elephrame gem!
 
-```ruby
+#+BEGIN_SRC ruby
 source 'https://rubygems.org'
 
 gem 'elephrame'
-```
+#+END_SRC
 
 There are a lot of extra options that you can use in a Gemfile, but at its basest this is how to use one!
 
 **** Project Structure
-So now that we've got a basic Gemfile, where do we put it? It belongs at the top level of your project! So, assuming we have our project in its own folder and our project's main ruby file is called `main.rb`, our file structure would look something like this:
+So now that we've got a basic Gemfile, where do we put it? It belongs at the top level of your project! So, assuming we have our project in its own folder and our project's main ruby file is called =main.rb=, our file structure would look something like this:
 
-```
+#+BEGIN_SRC
 project_folder/
 project_folder/Gemfile
 project_folder/main.rb
-```
+#+END_SRC
 
 And that's it!
 
-After you have your project setup like this, you need to tell bundler to install your gems. To do that all you have to do is have your project opened in your command line and run `bundle install` and it'll get the rest set up properly!
+After you have your project setup like this, you need to tell bundler to install your gems. To do that all you have to do is have your project opened in your command line and run =bundle install= and it'll get the rest set up properly!
 
 ** Running a script
 
