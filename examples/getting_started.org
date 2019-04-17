@@ -6,6 +6,8 @@
   + [[#installing][Installing]]
   + [[#playing-around][Playing around]]
   + [[#basic-syntax][Basic Syntax]]
+  + [[#variables][Variables]]
+  + [[#constants][Constants]]
   + [[#string-interpolation][String Interpolation]]
   + [[#blocks][Blocks]]
 - [[#gems][Gems]]
@@ -16,7 +18,7 @@
   + [[#without-bundler][Without Bundler]]
   + [[#with-bundler][With Bundler]]
 - [[#elephrame][Elephrame]]
-  - [[#bot-types][Bot Types]] 
+  + [[#bot-types][Bot Types]] 
 
 ** Ruby
 :PROPERTIES:
@@ -75,6 +77,54 @@ Arrays are just a list of other objects and are represented like this: [1, 2, 3]
 Hash tables are basically arrays that allow you to reference bits of data out of them using words. They look very similar to arrays, so don't get confused! E.g., { first: 1, second: 2 }
 
 
+*** Variables
+:PROPERTIES:
+:CUSTOM_ID: variables
+:END:
+In ruby you can store data in 'holders' called variables. Imagine it's like putting water into a jug, you're just storing it in a place you know for later!
+
+It's as easy as this: 
+
+#+BEGIN_SRC ruby
+variable = "Testing"
+#+END_SRC
+
+Variables can be named anything, so long as they don't contain certain special characters or start with a number or a capital letter.
+
+Invalid variable names:
+
+#+BEGIN_SRC ruby
+1variable
+#+END_SRC
+
+Valid variable names:
+
+#+BEGIN_SRC ruby
+variable1
+test_variable
+really_long_variable_name
+#+END_SRC
+
+Variablese can be reused as many times as you want. So if you have some code like this:
+
+#+BEGIN_SRC ruby
+my_variable = 15
+my_variable = my_variable + 3
+#+END_SRC
+
+Then it would store the result of 18 back into =my_variable=! 
+
+*** Constants
+:PROPERTIES:
+:CUSTOM_ID: constants
+:END:
+Constants are like variables, but instead of being able to change them on the fly they remain the same (constant!).
+
+How do we tell variables apart from constants? It's easy! All constants are capitalized.
+
+This is a constant: =ImportantConstant= and this is a variable: =important_variable=
+
+Constants can only be defined once and whatever data you put into one stays there. So be careful that you won't need to modify anything after you put it into a constant.
 
 *** String Interpolation
 :PROPERTIES:
@@ -204,11 +254,18 @@ We use =bundle exec= because we need ruby to run in the context of the project a
 
 
 ** Elephrame
-:PROPERTIES:
+:PROP`ERTIES:
 :CUSTOM_ID: elephrame
 :END:
+
+*** Abstraction
+:PROPERTIES:
+:CUSTOM_ID: abstraction
+:END:
+
 
 *** Bot Types
 :PROPERTIES:
 :CUSTOM_ID: bot-types
 :END:
+
