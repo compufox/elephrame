@@ -43,7 +43,7 @@ module Elephrame
       #  unless that account is our own, or the tagged account
       #  has #NoBot
       mentions = @mention_data[:mentions].collect do |m|
-        "@#{m.acct}" unless m.acct == @username or no_bot? m.id
+        "@#{m.acct}" unless m.acct == @username or m.no_bot?
       end.join ' '
       
       reply("#{mentions.strip} #{text}", *options)
