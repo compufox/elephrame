@@ -63,17 +63,17 @@ module Elephrame
       ##
       # create a new TraceryBot
       # @param interval [String] a string representing the interval to post
-      # @param tracery_dir [String] a string with the path to the directory
-      #    containing all of the tracery grammer rules.
+      # @param dirs [Array<String>] an array of strings with paths to  directories
+      #    containing tracery grammer rules
       # @return [Elephrame::Bots::TraceryBot]
       
-      def initialize interval, tracery_dir
+      def initialize interval, *dirs
         super()
 
         # set up our bot stuff
         setup_scheduler interval
         setup_streaming
-        setup_tracery tracery_dir
+        setup_tracery dirs
       end
 
       ##

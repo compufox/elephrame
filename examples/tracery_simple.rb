@@ -1,5 +1,7 @@
 require 'elephrame'
 
+# we define our bot by telling elephrame how often it should post,
+#  and where it should load our tracery rules from
 bot = Elephrame::Bots::TraceryBot.new('10s', 'tracery_files')
 
 #  this code happens automatically in the framework

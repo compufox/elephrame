@@ -12,23 +12,26 @@ module Elephrame
     # loads all of our tracery files into our +files+ hash
     # if a file is named 'default' then we load that into +grammar+
     #
-    # @param dir [String] path to the directory containing the tracery rules
+    # @param dirs [String] path to the directory containing the tracery rules
     
-    def setup_tracery dir_path
+    def setup_tracery *dirs
       raise "Provided path not a directory" unless Dir.exist?(dir_path)
 
       @grammar = {}
-      Dir.open(dir_path) do |dir|
-        dir.each do |file|
-          # skip our current and parent dir
-          next if file =~ /^\.\.?$/
 
-          # read the rule file into the files hash
-          @grammar[file.split('.').first] =
-            createGrammar(JSON.parse(File.read("#{dir_path}/#{file}")))
+      dirs.each do |directory|
+        Dir.open(directory) do |dir|
+          dir.each do |file|
+            # skip our current and parent dir
+            next if file =~ /^\.\.?$/
+            
+            # read the rule file into the files hash
+            @grammar[file.split('.').first] =
+              createGrammar(JSON.parse(File.read("#{dir_path}/#{file}")))
+          end
         end
       end
-
+        
       # go ahead and makes a default mention-handler
       #  if we have a reply rule file
       unless @grammar['reply'].nil?
