@@ -316,6 +316,39 @@ module Elephrame
         nil
       end
     end
+
+    ##
+    # A more general purpose markov bot. Reads in data from a supplied source
     
+    class MarkovBot < GenerativeBot
+
+      ##
+      # Creates a new Ebooks bot
+      #
+      # @param interval [String] how often should the bot post on it's own
+      # @param opts [Hash] options for the bot
+      # @option opt cw [String]
+      # @option opt retry_limit [Integer] the amount of times to retry
+      #        generating a post
+      # @option opt model_filename [String] path to a file where we 
+      #        will save our backing ebooks model data
+      # @option opt filter_filename [String] path to a file where we 
+      #        will save our internal filtered words data
+      # @option opt visibility [String] the posting level the bot will default to
+      
+      def initialize(interval, options = {})
+        super
+
+        # initialize the model to contain the specified source text
+      end
+    end
   end
 end
+
+
+
+
+
+
+
+
