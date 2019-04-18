@@ -1,6 +1,10 @@
+require 'htmlentities'
+
 module Mastodon
   class Status
     alias_method :rcontent, :content
+
+    Decoder = HTMLEntities.new
     
     ##
     # Strips all html tags out of +content+
@@ -8,13 +12,9 @@ module Mastodon
     # @return [String]
     
     def strip
-      rcontent
-        .gsub(/<\/p><p>/, "\n")
-        .gsub(/<("[^"]*"|'[^']*'|[^'">])*>/, '')
-        .gsub('&gt;', '>')
-        .gsub('&lt;', '<')
-        .gsub('&apos;', '\'')
-        .gsub('&quot;', '"')
+      Decoder.decode(rcontent
+                       .gsub(/<\/p><p>/, "\n")
+                       .gsub(/<("[^"]*"|'[^']*'|[^'">])*>/, ''))
     end
 
     ##

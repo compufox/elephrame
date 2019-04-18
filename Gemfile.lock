@@ -2,7 +2,8 @@ PATH
   remote: .
   specs:
     elephrame (0.4.6)
-      moo_ebooks (~> 1.0.0)
+      htmlentities (~> 4.0)
+      moo_ebooks (~> 1.0)
       moostodon (~> 0.4.0)
       rufus-scheduler
       tracery (~> 0.7)
