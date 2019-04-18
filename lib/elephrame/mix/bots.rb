@@ -100,6 +100,8 @@ module Elephrame
            :scrape_filter
       
       PrivacyLevels = ['public', 'unlisted', 'private', 'direct']
+      APILimit = 280
+      RetryTime = '6m'
       
       ##
       # Creates a new Ebooks bot
@@ -121,11 +123,13 @@ module Elephrame
       
       def initialize(interval, opts = {})
         super
-        
+
+        # add our manual update command
         add_command 'update' do
           fetch_posts
         end
 
+        # set some defaults for our internal vars
         level = PrivacyLevels.index(opts[:scrape_privacy]) || 0
         @scrape_filter = /(#{PrivacyLevels[0..level].join('|')})/
         @update_interval = opts[:update_interval] || '2d'
@@ -144,8 +148,9 @@ module Elephrame
             @old_id[account] = newest_id
           end
         end
-        
-        fetch_old_posts if @model_hash[:statuses].empty?
+
+        # if our model's token are empty that means we have an empty model
+        fetch_old_posts if @model_hash[:model].tokens.empty?
       end
 
       ##
@@ -153,12 +158,14 @@ module Elephrame
       #  should be ran first
       
       def fetch_old_posts
-        puts "fetching old posts" if ENV['DEBUG']
-        
         begin
+          # init some vars to keep track of where we are
           api_calls = 1
           errored = false
-          
+          new_posts = { statuses: [],
+                        mentions: [] }
+
+          # for each account we're following
           @following.each do |account|
             # okay so
             #  we keep track of how many get requests we're doing and before
@@ -167,21 +174,19 @@ module Elephrame
                                      exclude_reblogs: true,
                                      limit: 40,
                                      max_id: @old_id[account])
-            processed_count = 0 if ENV['DEBUG']
             
             # while we still have posts and haven't gotten near the api limit
-            while not posts.size.zero? and api_calls < 280
+            while not posts.size.zero? and api_calls < APILimit
               posts.each do |post|
                 
                 # add the new post to our hash
-                add_post_to_hash post if post.visibility =~ @scrape_filter
+                if post.visibility =~ @scrape_filter
+                  new_posts = add_post_to_hash post, new_posts
+                end
                 
                 # set our cached id to the latest post id
                 @old_id[account] = post.id
-                processed_count += 1 if ENV['DEBUG']
               end
-              
-              puts "processed #{processed_count} posts...fetching more" if ENV['DEBUG']
               
               # fetch more posts
               posts = @client.statuses(account,
@@ -191,19 +196,22 @@ module Elephrame
               api_calls += 1
             end
             
-            break if api_calls >= 280
+            break if api_calls >= APILimit
           end
           
         rescue Mastodon::Error::TooManyRequests
-          puts "hit the api limit, saving what we have and scheduling to continue" if ENV['DEBUG']
           errored = true
           
         ensure
-          save_file @model_filename, @model_hash.to_yaml
-          @model.consume! @model_hash
+          # consume our posts, and then save our model
+          @model_hash[:model].consume! new_posts
+          save_file(@model_filename,
+                    @model_hash.collect {|key, value| value }.to_yaml)
 
-          if api_calls >= 280 or errored 
-            @scheduler.in '5m' do
+          # if we have more than our limit of api calls
+          #  or we errored out that means we need to check again
+          if api_calls >= APILimit or errored 
+            @scheduler.in RetryTime do
               fetch_old_posts
             end
           end
@@ -215,66 +223,62 @@ module Elephrame
       
       def fetch_new_posts
         begin
+          # set up some vars for tracking our progress
           added_posts = { statuses: [],
                           mentions: [] }
           api_calls = 1
           errored = false
-          
+
+          # for each account we're following
           @following.each do |account|
-            
+            # get 40 posts at a time, where we left off
             posts = @client.statuses(account,
                                      exclude_reblogs: true,
                                      limit: 40,
                                      since_id: @model_hash[:last_id][account])
-            
-            while not posts.size.zero? and api_calls < 280
+
+            # while we have posts to process and we haven't
+            #  gotten near the api limit
+            while not posts.size.zero? and api_calls < APILimit
               posts.reverse_each do |post|
+                # save our post id for next loop
                 @model_hash[:last_id][account] = post.id
-                
-                post.class
-                  .module_eval { alias_method :content, :strip } if @strip_html
-                
-                if post.visibility =~ @scrape_filter
-                  if post.in_reply_to_id.nil? or post.mentions.size.zero?
-                    added_posts[:statuses] << post.content
-                  else
-                    added_posts[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
-                  end
+
+                # if the post matches our set visibility we add it to our hash
+                if posts.visibility =~ @scrape_filter
+                  added_posts = add_post_to_hash post, added_posts
                 end
               end
-              
+
+              # fetch more posts
               posts = @client.statuses(account,
                                        exclude_reblogs: true,
                                        limit: 40,
                                        since_id: @model_hash[:last_id][account])
               api_calls += 1
             end
-            
-            break if api_calls >= 280
+
+            # in case we hit our api limit between calls
+            break if api_calls >= APILimit
           end
           
         rescue Mastodon::Errors::TooManyRequests
+          # if we've hit here then we've errored out
           errored = true
           
         ensure
           # consume our new posts, and add them to our original hash
-          @model.consume! added_posts
-          @model_hash.merge! added_posts do |key, orig_val, new_val|
-            if key == :statuses or key == :mentions
-              new_val.each do |value|
-                orig_val << value
-              end
-            end
-          end
+          @model_hash[:model].consume! added_posts
           
-          if api_calls >= 280 or errored
-            @scheduler.in '5m' do
+          if api_calls >= APILimit or errored
+            @scheduler.in RetryTime do
               fetch_new_posts
             end
           end
           
           # then we save 
-          save_file @model_filename, @model_hash.to_yaml
+          save_file(@model_filename,
+                    @model_hash.collect {|key, value| value }.to_yaml)
         end
       end
 
@@ -299,7 +303,7 @@ module Elephrame
       #
       # @param post [Mastodon::Status]
       
-      def add_post_to_hash post
+      def add_post_to_hash post, hash
         # make sure we strip out the html crap
         post.class
           .module_eval { alias_method :content, :strip } if @strip_html
@@ -308,12 +312,12 @@ module Elephrame
         #  on if it's a reply or not
         # also make sure to strip out any account names
         if post.in_reply_to_id.nil? or post.mentions.size.zero?
-          @model_hash[:statuses] << post.content
+          hash[:statuses] << post.content
         else
-          @model_hash[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
+          hash[:mentions] << post.content.gsub(/@.+?(@.+?)?\s/, '')
         end
 
-        nil
+        hash
       end
     end
 
@@ -335,6 +339,7 @@ module Elephrame
       # @option opt filter_filename [String] path to a file where we 
       #        will save our internal filtered words data
       # @option opt visibility [String] the posting level the bot will default to
+      # @option opt 
       
       def initialize(interval, options = {})
         super

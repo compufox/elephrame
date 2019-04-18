@@ -36,9 +36,7 @@ module Elephrame
         setup_command
         
         # set some defaults and initialize some vars
-        @model = Ebooks::Model.new
-        @model_hash = { statuses: [],
-                        mentions: [],
+        @model_hash = { model: nil,
                         last_id:  {} }
         @filter = /./
         @filter_words = []
@@ -51,7 +49,12 @@ module Elephrame
         @filter_filename = options[:filter_filename] || SavedFilterFileName
         
         # load our model if it exists
-        @model_hash = load_file(@model_filename) if File.exists? @model_filename
+        if File.exists? @model_filename
+          values = load_file(@model_filename)
+          @model_hash[:model] = Ebooks::Model.from_hash(values.first)
+          @model_hash[:last_id] = values.last
+        end
+        
         @filter_words = load_file(@filter_filename) if File.exists? @filter_filename
         
         # add our commands
@@ -87,8 +90,10 @@ module Elephrame
           # retry our status creation until we get something that
           #  passes our filters
           @retry_limit.times do
-            text = @model.reply(status.content.gsub(/@.+?(@.+?)?\s/, ''),
-                                @char_limit)
+            text = @model_hash[:model].reply(status
+                                               .content
+                                               .gsub(/@.+?(@.+?)?\s/, ''),
+                                             @char_limit)
             break unless bot.reply_with_mentions(text,
                                                  spoiler: @cw).nil?
           end
@@ -109,7 +114,7 @@ module Elephrame
         # see scheduler.rb
         run_scheduled do |bot|
           @retry_limit.times do
-            text = @model.update(@char_limit)
+            text = @model_hash[:model].update(@char_limit)
             break unless bot.post(text,
                                   spoiler: @cw,
                                   visibility: @visibility).nil?
