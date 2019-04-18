@@ -36,7 +36,7 @@ module Elephrame
         setup_command
         
         # set some defaults and initialize some vars
-        @model_hash = { model: nil,
+        @model_hash = { model: Ebooks::Model.new,
                         last_id:  {} }
         @filter = /./
         @filter_words = []

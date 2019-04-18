@@ -206,7 +206,7 @@ module Elephrame
           # consume our posts, and then save our model
           @model_hash[:model].consume! new_posts
           save_file(@model_filename,
-                    @model_hash.collect {|key, value| value }.to_yaml)
+                    @model_hash.collect {|key, value| value.to_hash }.to_yaml)
 
           # if we have more than our limit of api calls
           #  or we errored out that means we need to check again
@@ -278,7 +278,7 @@ module Elephrame
           
           # then we save 
           save_file(@model_filename,
-                    @model_hash.collect {|key, value| value }.to_yaml)
+                    @model_hash.collect {|key, value| value.to_hash }.to_yaml)
         end
       end
 
