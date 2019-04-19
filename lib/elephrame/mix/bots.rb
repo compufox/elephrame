@@ -199,7 +199,7 @@ module Elephrame
             break if api_calls >= APILimit
           end
           
-        rescue Mastodon::Error::TooManyRequests
+        rescue 
           errored = true
           
         ensure
@@ -245,7 +245,7 @@ module Elephrame
                 @model_hash[:last_id][account] = post.id
 
                 # if the post matches our set visibility we add it to our hash
-                if posts.visibility =~ @scrape_filter
+                if post.visibility =~ @scrape_filter
                   added_posts = add_post_to_hash post, added_posts
                 end
               end
@@ -262,7 +262,7 @@ module Elephrame
             break if api_calls >= APILimit
           end
           
-        rescue Mastodon::Errors::TooManyRequests
+        rescue 
           # if we've hit here then we've errored out
           errored = true
           
@@ -400,10 +400,3 @@ module Elephrame
     end
   end
 end
-
-
-
-
-
-
-
