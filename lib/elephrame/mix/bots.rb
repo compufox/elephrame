@@ -126,7 +126,7 @@ module Elephrame
 
         # add our manual update command
         add_command 'update' do
-          fetch_posts
+          fetch_new_posts
         end
 
         # set some defaults for our internal vars
