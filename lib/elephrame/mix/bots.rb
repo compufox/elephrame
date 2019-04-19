@@ -339,17 +339,67 @@ module Elephrame
       # @option opt filter_filename [String] path to a file where we 
       #        will save our internal filtered words data
       # @option opt visibility [String] the posting level the bot will default to
-      # @option opt 
       
-      def initialize(interval, options = {})
-        super
+      def initialize(interval, *sources, **options)
+        super(interval, options)
 
+        raise 'no sources provided!' if sources.empty?
+        
         # initialize the model to contain the specified source text
+        if @model_hash[:model].tokens.empty?
+          sources.each do |source|
+            if Dir.exists? source
+              Dir.open source do |file|
+                next if file =~ /^\.\.?$/
+                read_and_consume "#{source}/#{file}"
+              end
+            elsif File.exists? source
+              read_and_consume source
+            else
+              raise "source #{source} could not be loaded"
+            end
+          end
+
+          save_file(@model_filename,
+                    @model_hash[:model].to_hash.to_yaml)
+        end
       end
+
+      private
+
+      ##
+      # reads a file in and adds it into the model
+      #
+      # @param file [String] path to a file
+      
+      def read_and_consume file
+        @model_hash[:model].consume! File.read(file)
+      end
+
+      
+=begin
+      ##
+      # scrapes text from a provided url
+      #
+      # @param url [String] a url
+      # @returns [Boolean]
+      
+      def download_and_consume url
+        uri = URI.parse url
+        errored = false
+        
+        begin
+          
+        rescue
+          errored = true
+        end
+
+        errored
+      end
+=end
     end
   end
 end
-
 
 
 
