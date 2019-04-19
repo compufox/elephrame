@@ -38,7 +38,7 @@ module Elephrame
         # set some defaults and initialize some vars
         @model_hash = { model: Ebooks::Model.new,
                         last_id:  {} }
-        @filter = /./
+        @filter = /^$/
         @filter_words = []
         @following = []
         @char_limit = @client.instance.max_toot_chars || 500
@@ -208,7 +208,7 @@ module Elephrame
         # default passed to false and then see if
         #  the supplied text gets through our filters
         passed = false
-        passed = text =~ @filter 
+        passed = !(text =~ @filter)
         passed = @filter_by.call(text) unless @filter_by.nil?
         
         actually_post(text, **opts) if passed

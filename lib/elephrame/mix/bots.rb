@@ -288,7 +288,7 @@ module Elephrame
       def run
         # set up our scheduler to scrape posts
         @scheduler.repeat @update_interval do
-          fetch_posts
+          fetch_new_posts
         end
 
         # call generativebot's run method
