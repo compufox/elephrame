@@ -13,7 +13,7 @@ module Mastodon
     
     def strip
       Decoder.decode(rcontent
-                       .gsub(/<\/p><p>/, "\n")
+                       .gsub(/(<\/p><p>|<br\s*\/?>)/, "\n")
                        .gsub(/<("[^"]*"|'[^']*'|[^'">])*>/, ''))
     end
 
