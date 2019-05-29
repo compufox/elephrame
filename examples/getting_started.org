@@ -18,7 +18,9 @@
   + [[#without-bundler][Without Bundler]]
   + [[#with-bundler][With Bundler]]
 - [[#elephrame][Elephrame]]
-  + [[#bot-types][Bot Types]] 
+  + [[#bot-types][Bot Types]]
+  + [[#putting-it-all-together][Putting It All Together]]
+  + [[#getting-more-advanced][Getting More Advanced]]
 
 ** Ruby
 :PROPERTIES:
@@ -259,9 +261,11 @@ We use =bundle exec= because we need ruby to run in the context of the project a
 
 
 ** Elephrame
-:PROP`ERTIES:
+:PROPERTIES:
 :CUSTOM_ID: elephrame
 :END:
+
+elephrame is a high level framework for creating bots for mastodon/pleroma. It abstracts away a lot of the routines that a bot developer would have to write in order to get started, providing 'templates' that you can overwrite with your own custom functionality.
 
 *** Abstraction
 :PROPERTIES:
@@ -269,8 +273,118 @@ We use =bundle exec= because we need ruby to run in the context of the project a
 :END:
 
 
+
 *** Bot Types
 :PROPERTIES:
 :CUSTOM_ID: bot-types
+:END:
+
+elephrame has many different types of bots, here's a list of the different types and their intended purposes:
+
+- Periodic: posts statuses on a specific schedule or interval
+- Interact: provides ways to call code when an account gets an interaction (boost, favorite, reply, follow)
+- PeriodInteract: combines the above two functionalities
+- Command: provides an easy way to create bots that wait for specific commands before doing anything ('!help', '!update', etc.)
+- Watcher: watches a specific timeline (global, local, hashtag, home) for updates and runs code when it sees posts
+- TraceryBot: very similar to PeriodInteract, except it provides shortcuts for using tracery style grammar files
+- EbooksBot: scans all posts from an account or accounts and generates new posts/replies based off of that input
+- Markov-bot: scans a text file and generates posts/replies based off of that input
+
+*** Putting It All Together
+:PROPERTIES:
+:CUSTOM_ID: putting-it-all-together
+:END:
+
+Okay! Enough explanation, lets create a bot!
+
+Assuming you have ruby installed and set up properly, create a folder to hold your files. I'll name mine =getting-started-example=
+
+Once the folder is created, lets go and create our Gemfile. Open your text editor and create a new file in your folder named =Gemfile= and inside of it put the following:
+
+#+BEGIN_SRC ruby
+source 'https://rubygems.org'
+
+gem 'elephrame'
+#+END_SRC
+
+Once you have done that, make sure you save it and open up your command line. You'll want to go to your project folder, and once there do a quick =bundle install=
+
+That will install your gems that you've specified in your Gemfile. Your project folder should look something like this (I'm going to use my folder name, just pretend it's yours!):
+
+#+BEGIN_SRC
+getting-started-example/
+getting-started-example/Gemfile
+getting-started-example/Gemfile.lock
+#+END_SRC
+
+Now, back in your text editor, create a new file in your folder called =main.rb= and enter this into it (don't worry, we'll go over it line by line in a second):
+
+#+BEGIN_SRC ruby
+require 'elephrame'
+
+ExampleBot = Elephrame::Bots::Periodic.new '10s'
+
+ExampleBot.run do |bot|
+  bot.post("Hello, world!")
+end
+#+END_SRC
+
+Let's break that down!
+
+#+BEGIN_SRC ruby
+require 'elephrame'
+#+END_SRC
+
+This first line loads the elephrame library. We call the process whereby ruby loads an external library =requiring= that library. When you =require= a library it gets loaded into the current ruby process and allows us to use code that is a part of it. Usually you'll want to keep any =require= statements at the top of your ruby programs, so that anyone who reads through your code knows what all is bring loaded! 
+
+#+BEGIN_SRC ruby
+ExampleBot = Elephrame::Bots::Periodic.new '10s'
+#+END_SRC
+
+This second line shows us creating a new Periodic bot (=Elephrame::Bots::Periodic.new=), passing it ='10s'= and assigning it to the constant =ExampleBot=. In ruby objects can 'live' in a 'package'. 'Packages' are like folders in your filesystem, however instead of being separated with an '/' or '\' they're separated with '::'. So one way to look at this is 'use the Periodic object in the Bots folder of Elephrame'. The =.new= at the end is saying 'create a new instance of this object'. We're passing in ='10s'= because a Periodic bot needs to know how often it needs to post, this is saying 'post every 10 seconds'. 
+
+Putting all of that together: "create a new instance of the Periodic object from the Bots folder of Elephrame, tell it to post every 10 seconds, and put that bot inside of ExampleBot"
+
+#+BEGIN_SRC ruby
+ExampleBot.run do |bot|
+  bot.post("Hello, world!")
+end
+#+END_SRC
+
+Now we're getting to the tricky parts! =ExampleBot.run= is a method that takes a block which is what elephrame does when it runs the bot. So, like explained above, we do a block (the =do ... end= parts). This block passes out a parameter which gives us access to the bot letting us post, among other things! The next line, =bot.post("Hello, world!")= is the logic that runs every time the bot is supposed to run. It tells the framework to simply post the status "Hello, world!". There are many options that the =post= method supports, but for this simple case just providing the status to post will do.
+
+Now that we've gone over it, make sure you save it! Your project folder should now look something like this:
+
+#+BEGIN_SRC
+getting-started-example/
+getting-started-example/Gemfile
+getting-started-example/Gemfile.lock
+getting-started-example/main.rb
+#+END_SRC
+
+Now that we've got all of the files set up, we need to get our bot's token! Without a token our bot can't make or read posts. Open Mastodon (it can be your account for now, but I would encourage you to make a separate account for your bot once it's finished), and open the settings. There will be an option on the side for 'Development' settings. Open that, and then generate a new application token. Set the name to "My Elephrame Example", leaving the homepage blank and the redirect URI set to the default. You can give the bot any permissions you want, but this example bot needs (at least) the write:status permission. Once you've filled out the necessary fields go and click 'save' at the bottom. It will take you back to the main development menu, except your newly created application will be an option to click. Go ahead and click on it and copy the access token it shows. This token is very special and is what allows your bot to connect to Mastodon!
+
+Open up your command line, and run the following in your project folder:
+
+Linux/MacOS: ~INSTANCE="https://your.instance" TOKEN="yourToken" bundle exec ruby main.rb~
+
+Windows:
+
+#+BEGIN_SRC bat
+set INSTANCE=https://your.instance
+set TOKEN=yourToken
+bundle exec ruby main.rb
+#+END_SRC
+
+
+If everything worked properly then running these commands will cause your command line to appear to hang up, as though it's waiting for input. That means your bot is working!
+
+If you have your Mastodon account open (the account you got the token from) then after 10 seconds you should see a post from your account saying "Hello, World!". Since this is the only code our bot has it will continue posting this every 10 seconds forever.
+
+Congratulations! You've made your first Mastodon bot! :3
+
+*** Getting More Advanced
+:PROPERTIES:
+:CUSTOM_ID: getting-more-advanced
 :END:
 
