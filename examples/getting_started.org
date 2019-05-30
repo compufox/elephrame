@@ -165,9 +165,26 @@ Not only can you put variables into strings like this, you can also put method c
 :PROPERTIES:
 :CUSTOM_ID: blocks
 :END:
-One of the coolest things about ruby is that you can pass code around fairly easily. This allows for some really neat things, but most importantly it aids in readability.
 
+Blocks are a fairly unique thing to ruby. They allow you do define code and pass them as parameters to methods. Here's an example:
 
+#+BEGIN_SRC ruby
+example_method do 
+  puts "Hello from a block!"
+end
+#+END_SRC
+
+Everything between (and including) =do= and =end= is a block! You can pass it to functions, and if they support accepting blocks they'll be able to run whatever code you include! This is useful, but it's made even more useful because data can be passed *in* to a block as well. Here's an example of how that looks:
+
+#+BEGIN_SRC ruby
+example_method2 do |data, data2|
+  puts "Hello from a block!"
+  puts "I recieved this data: #{data}"
+  puts "I recieved this data as well: #{data2}"
+end
+#+END_SRC
+
+Think about the syntax like this: =data= and =data2= are *sliding* into the block. That's why they need the =|= s on either side of them! Otherwise how will they safely get in there? :P
 
 ** Gems
 :PROPERTIES:
@@ -272,6 +289,7 @@ elephrame is a high level framework for creating bots for mastodon/pleroma. It a
 :CUSTOM_ID: abstraction
 :END:
 
+*_TODO: discuss some of the general bot abstractions_*
 
 
 *** Bot Types
@@ -387,4 +405,58 @@ Congratulations! You've made your first Mastodon bot! :3
 :PROPERTIES:
 :CUSTOM_ID: getting-more-advanced
 :END:
+
+Now that you've gotten your first bot under your belt, let's expand on it! Let's add in the ability for the bot to respond to replies!
+
+To do this, we're going to change the base type of the bot to =PeriodInteract= and add in some code to handle what happens when we get a reply.
+
+Reopen =main.rb= in your text editor if you don't still have it open and edit it until it resembles the following:
+
+#+BEGIN_SRC ruby
+require 'elephrame'
+
+ExampleBot = Elephrame::Bots::PeriodInteract.new '10s'
+
+ExampleBot.on_reply do |bot, post|
+  bot.reply("Hello, user!")
+end
+
+ExampleBot.run do |bot|
+  bot.post("Hello, world!")
+end
+#+END_SRC
+
+Let's break those changes down a bit!
+
+First things first: we changed what kind of bot we're using from =Periodic= to =PeriodicInteract=.
+
+#+BEGIN_SRC ruby
+ExampleBot.on_reply do |bot, post|
+  bot.reply("Hello, user!")
+end
+#+END_SRC
+
+We also added in a new method, =on_reply=. It looks very similar to how we use =run= doesn't it? That's because we do use it the exact same way! PeriodInteract allows us to react whenever the bot's account receives any kind of interaction through =on_fave=, =on_boost=, =on_follow=, and =on_reply= methods. Each of these methods accept a block just like the =run= method does, however, these methods pass in another object besides just the main bot one like =run= does. They pass in =bot= (a reference to the main bot object) and =post= (a reference to the post that received the interaction [except in the case of =on_reply=, which receives the reply itself]). The code inside the block is also slightly different than that of the =run= method in that instead of using the =bot.post= method we use the =bot.reply= method. That method, as you may have guessed, this makes the bot reply to the new mention with ="Hello, user!"=.
+
+Saving and running it from your command line will have your bot posting every 10 seconds and also replying to any user who replies to one of their posts!
+
+
+This is good and all, but it feels so impersonal, but we can fix that!
+
+Change the =on_reply= code to this:
+
+#+BEGIN_SRC ruby
+ExampleBot.on_reply do |bot, post|
+  user_name = post.account.display_name
+  bot.reply("Hello, #{user_name}!")
+end
+#+END_SRC
+
+What we have now will respond back to a reply with their display name! To accomplish this we've combined a lot of the basics that we've covered above!
+
+To start with, we save the display name for the account that the reply came from (=post.account.display_name=), and put it into the reply string using string interpolation (="Hello, #{user_name}!"=).
+
+Let me explain how we got the account's display name. Each post object contains a lot of data about itself including the =account= it came from, the =content= of the post, it's =id=, it's =spoiler_text= (Content Warning), and much more! The account object is very similar, containing it's =id=, =username=, =acct= (full account handle e.g., example@test.lol), and =display_name=.
+
+*Note: most data exposed through Mastodon objects can be found [[https://docs.joinmastodon.org/api/entities/][here]].*
 
