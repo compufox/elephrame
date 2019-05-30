@@ -8,6 +8,7 @@
   + [[#basic-syntax][Basic Syntax]]
   + [[#variables][Variables]]
   + [[#constants][Constants]]
+  + [[#methods][Methods]]
   + [[#string-interpolation][String Interpolation]]
   + [[#blocks][Blocks]]
 - [[#gems][Gems]]
@@ -131,6 +132,8 @@ Constants can only be defined once and whatever data you put into one stays ther
 :PROPERTIES:
 :CUSTOM_ID: methods
 :END:
+
+*TODO: talk about methods, what they are, and how to define them*
 
 
 *** String Interpolation
@@ -289,7 +292,7 @@ elephrame is a high level framework for creating bots for mastodon/pleroma. It a
 :CUSTOM_ID: abstraction
 :END:
 
-*_TODO: discuss some of the general bot abstractions_*
+*TODO: discuss some of the general bot abstractions*
 
 
 *** Bot Types
