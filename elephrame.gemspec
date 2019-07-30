@@ -1,4 +1,3 @@
-
 lib = File.expand_path("../lib", __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require "elephrame/version"
@@ -42,7 +41,7 @@ Gem::Specification.new do |spec|
   
   spec.add_dependency 'rufus-scheduler'
   spec.add_dependency 'moostodon', '~> 0.4.0'
-  spec.add_dependency 'moo_ebooks', '~> 1.0'
+  spec.add_dependency 'moo_ebooks', '~> 1'
   spec.add_dependency 'tracery', '~> 0.7'
   spec.add_dependency 'htmlentities', '~>4.0'
 end
