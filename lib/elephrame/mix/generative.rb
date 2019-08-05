@@ -57,32 +57,25 @@ module Elephrame
         
         @filter_words = load_file(@filter_filename) if File.exists? @filter_filename
         
-        # add our commands
+        # add our default commands
         #
         # !delete will delete the status it's in reply to
-        add_command 'delete' do |bot, content, status|
-          if @following.include? status.account.id
-            @client.destroy_status(status.in_reply_to_id)
-            bot.reply('status deleted')
-          end
+        add_privileged_command 'delete' do |bot, content, status|
+          @client.destroy_status(status.in_reply_to_id)
         end
         
         # !filter will add every word from the post into the word filter
-        add_command 'filter' do |bot, content, status|
-          if @following.include? status.account.id
-            content.split.each do |word|
-              add_filter_word word
-            end
-            save_file @filter_filename, @filter_words.to_yaml
-            bot.reply("'#{content}' added to internal filter")
+        add_privileged_command 'filter' do |bot, content, status|
+          content.split.each do |word|
+            add_filter_word word
           end
+          save_file @filter_filename, @filter_words.to_yaml
+          bot.reply("'#{content}' added to internal filter")
         end
 
         # add a help command that explains the other commands
-        add_command 'help' do |bot|
-          if @following.include? status.account.id
-            bot.reply(HelpMessage)
-          end
+        add_privileged_command 'help' do |bot|
+          bot.reply(default_help)
         end
         
         # set up a default for replying
@@ -126,6 +119,37 @@ module Elephrame
         #  this should work. :shrug:
         run_commands do |bot, status|
           @on_reply.call(bot, status)
+        end
+      end
+
+      ##
+      # generates a default help message for the default commands
+      # if you add custom commands add a `custom_command_help` method
+      # that returns a string. it will be added to the end of this
+      #
+      # @returns [String] default help text
+
+      def default_help
+        txt = []
+        txt << "#{@prefix}delete -- deletes the status that the command post is replying to"
+        txt << "#{@prefix}filter -- adds all words from the command post into the internal filter"
+        txt << "#{@prefix}help -- replies with this help text"
+        txt << custom_command_help if respond_to? :custom_command_help
+        txt.join "\n"
+      end
+
+      ##
+      # adds a command that can only be executed by someone
+      #  that the bot follows
+      #
+      # @param cmd [String] a command to add
+      # @param block [Proc] the code to execute when +cmd+ is recieved
+      
+      def add_privileged_command cmd, &block
+        add_command cmd do |bot, content, status|
+          if @following.include? status.account.id
+            block.call(bot, content, status)
+          end
         end
       end
       

@@ -125,7 +125,7 @@ module Elephrame
         super
 
         # add our manual update command
-        add_command 'update' do
+        add_privileged_command 'update' do
           fetch_new_posts
         end
 
@@ -330,6 +330,8 @@ module Elephrame
       # Creates a new Ebooks bot
       #
       # @param interval [String] how often should the bot post on it's own
+      # @param sources [Array] all of the sources for the bot. either 
+      #        folders or files
       # @param opts [Hash] options for the bot
       # @option opt cw [String]
       # @option opt retry_limit [Integer] the amount of times to retry
