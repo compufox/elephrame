@@ -56,6 +56,10 @@ So far the framework support 6 bot types: Periodic, Interact, PeroidInteract, Re
 - `Command` supports running code when mentioned with commands it recognizes
 - `Watcher` supports watching streaming timelines (including lists, hashtags, public timeline, local timeline, and user timeline)
 - `TraceryBot` supports automatically loading tracery rules. Overloads post method to automatically expand any text passed through it. This bot type provides certain options that ease the use of tracery grammar rules, please see examples and/or documentation for more explanation.
+- `EbooksBot` provides a very quick and easy way to create an ebooks bot. Please see the example in the examples folder for a detailed explanation. 
+- `MarkovBot` provides a quick way to get started with making markov bots. Please see the example in the examples folder.
+
+Both the Ebooks and Markov bots support a few commands out of the box. `!delete`, `!filter`, and `!help`. These commands will only work when sent from an account that the bot is following. The Ebooks bot supports `!update` as well.
 
 The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
 

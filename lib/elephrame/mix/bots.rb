@@ -295,6 +295,18 @@ module Elephrame
         super
       end
 
+      ##
+      # overloads the super's help method
+      #
+      # @returns [String] default help text
+
+      def default_help
+        txt = []
+        txt << '!update -- tells the bot to manually fetch new posts'
+        txt << super
+        txt.join '\n'
+      end
+      
       private
 
       ##
