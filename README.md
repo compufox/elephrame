@@ -61,7 +61,7 @@ So far the framework support 6 bot types: Periodic, Interact, PeroidInteract, Re
 
 Both the Ebooks and Markov bots support a few commands out of the box. `!delete`, `!filter`, and `!help`. These commands will only work when sent from an account that the bot is following. The Ebooks bot supports `!update` as well.
 
-The string passed to `Periodic` and `PeroidInteract` must be either a 'Duration' string or a 'Cron' string, as parsable by [fugit](https://github.com/floraison/fugit)
+Any time a 'time' string is needed it must be either a 'Duration' or 'Cron' string as parsable by [fugit](https://github.com/floraison/fugit)
 
 ## Usage
 
