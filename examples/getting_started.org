@@ -11,6 +11,7 @@
   + [[#methods][Methods]]
   + [[#string-interpolation][String Interpolation]]
   + [[#blocks][Blocks]]
+  + [[#more-info][More Info]]
 - [[#gems][Gems]]
   + [[#what-are-gems][What are Gems?]]
   + [[#install-gems][Install Gems]]
@@ -133,8 +134,26 @@ Constants can only be defined once and whatever data you put into one stays ther
 :CUSTOM_ID: methods
 :END:
 
-*TODO: talk about methods, what they are, and how to define them*
+Methods are chunks of code that are grouped underneath a single name.
+They allow a developer to easily reuse code across a project.
 
+To define a method you need to do the following:
+
+#+BEGIN_SRC ruby
+def example
+end
+#+END_SRC
+
+Any code that you put between the line starting with =def= and the line starting with =end= will be able to run by just writing =example=!
+
+if you wanted to be able to pass data into methods we can do that, too!
+
+#+BEGIN_SRC ruby
+def example(param1, param2)
+end
+#+END_SRC
+
+you now would call example this: =example(1,2)= and any code inside of the method would have access to =1,2= through the variables =param1, param2=!
 
 *** String Interpolation
 :PROPERTIES:
@@ -188,6 +207,13 @@ end
 #+END_SRC
 
 Think about the syntax like this: =data= and =data2= are *sliding* into the block. That's why they need the =|= s on either side of them! Otherwise how will they safely get in there? :P
+
+*** More info
+:PROPERTIES:
+:CUSTOM_ID: more-info
+:END:
+
+If this quick intro to ruby has sparked your interest and you want to know more about it, i recommend this [[https://poignant.guide/book/chapter-3.html][guide]]. it can be a bit much at some points, but i found it a great introduction to ruby!
 
 ** Gems
 :PROPERTIES:
@@ -286,13 +312,6 @@ We use =bundle exec= because we need ruby to run in the context of the project a
 :END:
 
 elephrame is a high level framework for creating bots for mastodon/pleroma. It abstracts away a lot of the routines that a bot developer would have to write in order to get started, providing 'templates' that you can overwrite with your own custom functionality.
-
-*** Abstraction
-:PROPERTIES:
-:CUSTOM_ID: abstraction
-:END:
-
-*TODO: discuss some of the general bot abstractions*
 
 
 *** Bot Types
