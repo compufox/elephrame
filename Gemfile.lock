@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    elephrame (0.5)
+    elephrame (0.5.1)
       htmlentities (~> 4.0)
       moo_ebooks (~> 1)
       moostodon (~> 0.4.0)
