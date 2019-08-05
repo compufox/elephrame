@@ -27,7 +27,7 @@ Or install it yourself as:
 
 ## Quickstart
 
-bot that posts "i'm gay" every three hours:
+bot that posts "trans right are human rights" every three hours:
 
 ```ruby
 require 'elephrame'
@@ -35,7 +35,7 @@ require 'elephrame'
 my_bot = Elephrame::Bots::Periodic.new '3h'
 
 my_bot.run do |bot|
-  bot.post("i'm gay")
+  bot.post("trans rights are human rights")
 end
 ```
 
