@@ -21,9 +21,6 @@ module Elephrame
       # @return [Elephrame::Bots::BaseBot]
       
       def initialize
-        # TODO: put some code here to detect if its a gab domain
-        #  idea: pull the fediverse.network page and search
-        #   the text of the page for the provided INSTANCE
 
         raise "Fuck off Gabber" if Net::HTTP.get(URI.parse(FNGabLink)).include? URI.parse(ENV['INSTANCE']).host
         
