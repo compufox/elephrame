@@ -25,7 +25,7 @@ module Elephrame
         #  idea: pull the fediverse.network page and search
         #   the text of the page for the provided INSTANCE
 
-        raise "Fuck off Gabber" if INSTANCE =~ Net::HTTP.get(URI.parse(FNGabLink))
+        raise "Fuck off Gabber" if Net::HTTP.get(URI.parse(FNGabLink)).include? URI.parse(ENV['INSTANCE']).host
         
         @client = Mastodon::REST::Client.new(base_url: ENV['INSTANCE'],
                                              bearer_token: ENV['TOKEN'])
