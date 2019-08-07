@@ -12,6 +12,7 @@ module Elephrame
       attr_accessor :strip_html, :max_retries
 
       NoBotRegex = /#?NoBot/i
+      FNGabLink  = 'https://fediverse.network/mastodon?build=gab'
 
       ##
       # Sets up our REST +client+, gets and saves our +username+, sets default
@@ -20,6 +21,12 @@ module Elephrame
       # @return [Elephrame::Bots::BaseBot]
       
       def initialize
+        # TODO: put some code here to detect if its a gab domain
+        #  idea: pull the fediverse.network page and search
+        #   the text of the page for the provided INSTANCE
+
+        raise "Fuck off Gabber" if INSTANCE =~ Net::HTTP.get(URI.parse(FNGabLink))
+        
         @client = Mastodon::REST::Client.new(base_url: ENV['INSTANCE'],
                                              bearer_token: ENV['TOKEN'])
         @username = @client.verify_credentials().acct
