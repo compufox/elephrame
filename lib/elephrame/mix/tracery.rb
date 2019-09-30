@@ -14,7 +14,7 @@ module Elephrame
     #
     # @param dirs [String] path to the directory containing the tracery rules
     
-    def setup_tracery dirs
+    def setup_tracery *dirs
       
       @grammar = {}
 
