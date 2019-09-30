@@ -1,4 +1,6 @@
 require 'net/http'
+require 'digest'
+require 'time'
 
 module Elephrame  
   module Bots
@@ -12,6 +14,7 @@ module Elephrame
       attr_accessor :strip_html, :max_retries
 
       NoBotRegex = /#?NoBot/i
+      FNGabLink  = 'https://fediverse.network/mastodon?build=gab'
 
       ##
       # Sets up our REST +client+, gets and saves our +username+, sets default
@@ -20,6 +23,9 @@ module Elephrame
       # @return [Elephrame::Bots::BaseBot]
       
       def initialize
+
+        raise "Fuck off Gabber" if Net::HTTP.get(URI.parse(FNGabLink)).include? URI.parse(ENV['INSTANCE']).host
+        
         @client = Mastodon::REST::Client.new(base_url: ENV['INSTANCE'],
                                              bearer_token: ENV['TOKEN'])
         @username = @client.verify_credentials().acct
@@ -55,10 +61,16 @@ module Elephrame
           spoiler_text: spoiler,
           in_reply_to_id: reply_id,
           media_ids: @failed[:media] ? [] : uploaded_ids,
-          sensitive: hide_media,
+          sensitive: hide_media
         }
 
+        # create a unique key for the status
+        #  this key prevents a status from being posted more than once
+        #  SHOULD be unique enough, by smooshing time and content together
+        idempotency = Digest::SHA256.hexdigest("#{Time.now}#{text}")
+        
         @failed[:post] = retry_if_needed {
+          options[:headers] = { "Idempotency-Key" => idempotency }
           @client.create_status text, options
         }
       end

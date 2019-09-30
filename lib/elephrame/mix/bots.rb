@@ -73,7 +73,7 @@ module Elephrame
         # set up our bot stuff
         setup_scheduler interval
         setup_streaming
-        setup_tracery dirs
+        setup_tracery *dirs
       end
 
       ##

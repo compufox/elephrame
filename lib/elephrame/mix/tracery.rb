@@ -15,8 +15,7 @@ module Elephrame
     # @param dirs [String] path to the directory containing the tracery rules
     
     def setup_tracery *dirs
-      raise "Provided path not a directory" unless Dir.exist?(dir_path)
-
+      
       @grammar = {}
 
       dirs.each do |directory|
@@ -27,7 +26,7 @@ module Elephrame
             
             # read the rule file into the files hash
             @grammar[file.split('.').first] =
-              createGrammar(JSON.parse(File.read("#{dir_path}/#{file}")))
+              createGrammar(JSON.parse(File.read("#{directory}/#{file}")))
           end
         end
       end
