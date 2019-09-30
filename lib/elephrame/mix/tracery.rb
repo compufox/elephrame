@@ -26,7 +26,7 @@ module Elephrame
             
             # read the rule file into the files hash
             @grammar[file.split('.').first] =
-              createGrammar(JSON.parse(File.read("#{dir_path}/#{file}")))
+              createGrammar(JSON.parse(File.read("#{directory}/#{file}")))
           end
         end
       end
