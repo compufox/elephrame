@@ -46,7 +46,7 @@ GEM
     oj (3.9.1)
     public_suffix (4.0.1)
     raabro (1.1.6)
-    rake (10.5.0)
+    rake (13.0.1)
     rufus-scheduler (3.6.0)
       fugit (~> 1.1, >= 1.1.6)
     tracery (0.7.7)
@@ -67,7 +67,7 @@ DEPENDENCIES
   bundler (~> 1.17)
   elephrame!
   minitest (~> 5.0)
-  rake (~> 10.0)
+  rake (~> 13.0)
   tzinfo-data
 
 BUNDLED WITH
